@@ -18,6 +18,6 @@
     <string name="server_error">Server Error</string>
     <string name="added_to_favourites">Anime added to Favourites</string>
     <string name="removed_from_favourites">Anime removed from Favourites</string>
-    <string name="see_more" translatable="false"><![CDATA[See more >]]></string>
+    <string name="see_more"><![CDATA[See more >]]></string>
     <string name="video_quality">Video Quality</string>
 </resources>
