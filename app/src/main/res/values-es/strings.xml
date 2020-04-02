@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Anime X Stream</string>
+    <string name="discover">Descubre</string>
+    <string name="retry">reintentar</string>
+    <string name="released">Fecha de lanzamiento:</string>
+    <string name="type">Tipo:</string>
+    <string name="status">Estado:</string>
+    <string name="next_episode"><u>Episodio siguiente</u></string>
+    <string name="previous_episode"><u>Episodio anterior</u></string>
+    <string name="back_button">Atras</string>
+    <string name="search">Buscar…</string>
+    <string name="something_went_wrong">Algo salió mal</string>
+    <string name="no_internet">Sin conexión</string>
+    <string name="favourite">Favoritos</string>
+    <string name="status_code_default">Algo salió mal</string>
+    <string name="server_error">Error del servidor</string>
+    <string name="added_to_favourites">Anime añadido a Favoritos</string>
+    <string name="removed_from_favourites">Anime eliminado de Favoritos</string>
+    <string name="video_quality">Calidad</string>
+</resources>

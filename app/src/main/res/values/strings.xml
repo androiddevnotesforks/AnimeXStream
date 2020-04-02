@@ -2,12 +2,12 @@
     <string name="app_name">Anime X Stream</string>
     <string name="discover">Browse</string>
     <string name="retry">retry</string>
-    <string name="quality_auto">Auto</string>
+    <string name="quality_auto" translatable="false">Auto</string>
     <string name="released">Released:</string>
     <string name="type">Type:</string>
     <string name="status">Status:</string>
     <string name="next_episode"><u>Next Episode</u>></string>
-    <string name="previous_episode">&lt;<u>Previous Episode</u></string>
+    <string name="previous_episode"><u>Previous Episode</u></string>
     <string name="back_button">Back Button</string>
     <string name="search">Search</string>
     <string name="something_went_wrong">Something Went Wrong</string>
@@ -18,5 +18,6 @@
     <string name="server_error">Server Error</string>
     <string name="added_to_favourites">Anime added to Favourites</string>
     <string name="removed_from_favourites">Anime removed from Favourites</string>
-    <string name="see_more"><![CDATA[See more >]]></string>
+    <string name="see_more" translatable="false"><![CDATA[See more >]]></string>
+    <string name="video_quality">Video Quality</string>
 </resources>
