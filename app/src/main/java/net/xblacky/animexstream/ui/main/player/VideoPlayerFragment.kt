@@ -356,7 +356,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         mappedTrackInfo = trackSelector?.currentMappedTrackInfo
         TrackSelectionDialogBuilder(
             context,
-            "Video Quality",
+            getString(R.string.video_quality),
             trackSelector,
             0
 
