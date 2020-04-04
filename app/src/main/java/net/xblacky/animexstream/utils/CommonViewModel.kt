@@ -20,6 +20,7 @@ open class CommonViewModel : ViewModel() {
     var errorModel: LiveData<ErrorModel> = _errorModel
 
 
+
     protected fun updateErrorModel(show: Boolean,e: Throwable?, isListEmpty: Boolean) {
         val errorCode: Int
         var errorMsgId = R.string.something_went_wrong
@@ -55,5 +56,6 @@ open class CommonViewModel : ViewModel() {
             isListEmpty
         )
     }
+
 
 }

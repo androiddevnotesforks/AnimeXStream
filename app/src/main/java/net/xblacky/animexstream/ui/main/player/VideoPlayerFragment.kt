@@ -132,7 +132,6 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
     fun updateContent(content: Content) {
         this.content = content
-        updateVideoUrl(URLDecoder.decode(content.url, StandardCharsets.UTF_8.name()))
         episodeName.text = content.episodeName
         this.content.nextEpisodeUrl?.let {
             nextEpisode.visibility = View.VISIBLE
@@ -144,6 +143,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         } ?: kotlin.run {
             previousEpisode.visibility = View.GONE
         }
+        updateVideoUrl(URLDecoder.decode(content.url, StandardCharsets.UTF_8.name()))
 
     }
 
@@ -219,8 +219,8 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
     private fun refreshData() {
         if (::content.isInitialized && !content.url.isNullOrEmpty()) {
-                loadVideo(player.currentPosition, true)
-        }else{
+            loadVideo(player.currentPosition, true)
+        } else {
             (activity as VideoPlayerActivity).refreshM3u8Url()
         }
 
@@ -295,13 +295,31 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                 rootView.errorText.text = getString(errorMsgId)
                 when (errorCode) {
                     ERROR_CODE_DEFAULT -> {
-                        rootView.errorImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_error, null))
+                        rootView.errorImage.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                resources,
+                                R.drawable.ic_error,
+                                null
+                            )
+                        )
                     }
                     RESPONSE_UNKNOWN -> {
-                        rootView.errorImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_error, null))
+                        rootView.errorImage.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                resources,
+                                R.drawable.ic_error,
+                                null
+                            )
+                        )
                     }
                     NO_INTERNET_CONNECTION -> {
-                        rootView.errorImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_internet, null))
+                        rootView.errorImage.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                resources,
+                                R.drawable.ic_internet,
+                                null
+                            )
+                        )
                     }
                 }
             }
@@ -388,14 +406,22 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                 // querying the cause.
                 if (httpError is InvalidResponseCodeException) {
                     val responseCode = httpError.responseCode
-                    if(responseCode == 410){
-                        content.url = ""
-                        showErrorLayout(show = true, errorMsgId = R.string.server_error, errorCode = RESPONSE_UNKNOWN)
-                    }
+
+                    content.url = ""
+                    showErrorLayout(
+                        show = true,
+                        errorMsgId = R.string.server_error,
+                        errorCode = RESPONSE_UNKNOWN
+                    )
+
                     Timber.e("Response Code $responseCode")
                     // message and headers.
                 } else {
-                    showErrorLayout(show = true, errorMsgId = R.string.no_internet, errorCode =  NO_INTERNET_CONNECTION)
+                    showErrorLayout(
+                        show = true,
+                        errorMsgId = R.string.no_internet,
+                        errorCode = NO_INTERNET_CONNECTION
+                    )
                 }
             }
         }
@@ -405,7 +431,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         if (playbackState == Player.STATE_READY) {
             showLoading(false)
         }
-        if(playbackState == Player.STATE_BUFFERING){
+        if (playbackState == Player.STATE_BUFFERING) {
             showLoading(false)
         }
         if (playbackState == Player.STATE_READY && playWhenReady) {
@@ -487,7 +513,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
     override fun onStop() {
         saveWatchedDuration()
-        if(::content.isInitialized){
+        if (::content.isInitialized) {
             (activity as VideoPlayerListener).updateWatchedValue(content)
         }
         playOrPausePlayer(false)
@@ -537,11 +563,11 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 //    }
 
     private fun saveWatchedDuration() {
-        if(::content.isInitialized){
+        if (::content.isInitialized) {
             val watchedDuration = player.currentPosition
             content.duration = player.duration
             content.watchedDuration = watchedDuration
-            if(watchedDuration > 0){
+            if (watchedDuration > 0) {
                 (activity as VideoPlayerListener).updateWatchedValue(content)
             }
         }

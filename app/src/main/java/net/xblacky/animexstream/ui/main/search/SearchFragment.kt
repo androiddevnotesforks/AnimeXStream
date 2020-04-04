@@ -2,6 +2,8 @@ package net.xblacky.animexstream.ui.main.search
 
 import android.content.Context
 import android.content.res.Configuration
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,16 +11,19 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView.OnEditorActionListener
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_search.view.*
 import kotlinx.android.synthetic.main.loading.view.*
 import net.xblacky.animexstream.R
 import net.xblacky.animexstream.ui.main.search.epoxy.SearchController
+import net.xblacky.animexstream.utils.CommonViewModel2
 import net.xblacky.animexstream.utils.ItemOffsetDecoration
 import net.xblacky.animexstream.utils.model.AnimeMetaModel
 
@@ -89,26 +94,44 @@ class SearchFragment : Fragment(), View.OnClickListener, SearchController.EpoxyS
     }
 
     private fun setObserver(){
-        viewModel.searchList.observe(viewLifecycleOwner, Observer {
-            searchController.setData(it ,viewModel.isLoading.value?.isLoading ?: false)
-            if(!it.isNullOrEmpty()){
-                hideKeyBoard()
-            }
-        })
 
 
-        viewModel.isLoading.observe( viewLifecycleOwner, Observer {
-            if(it.isLoading){
-                if(it.isListEmpty){
-                    rootView.loading.visibility =  View.VISIBLE
-                }else{
-                    rootView.loading.visibility = View.GONE
-                }
+        viewModel.loadingModel.observe(viewLifecycleOwner, Observer {
+            if(it.isListEmpty){
+                if (it.loading == CommonViewModel2.Loading.LOADING) rootView.loading.visibility = View.VISIBLE
+                //TODO Error Visibiity GONE
+                else if (it.loading == CommonViewModel2.Loading.ERROR
+                //Todo Error visisblity visible
+                ) rootView.loading.visibility = View.GONE
             }else{
-               rootView.loading.visibility = View.GONE
+                searchController.setData(viewModel.searchList.value, it.loading== CommonViewModel2.Loading.LOADING)
+                if (it.loading == CommonViewModel2.Loading.ERROR) view?.let { it1 -> Snackbar.make(it1, getString(it.errorMsg), Snackbar.LENGTH_SHORT).show() }
+                else if (it.loading == CommonViewModel2.Loading.COMPLETED) rootView.loading.visibility = View.GONE
+
             }
-            searchController.setData(viewModel.searchList.value, it.isLoading)
+
         })
+
+//        viewModel.searchList.observe(viewLifecycleOwner, Observer {
+//            searchController.setData(it ,viewModel.isLoading.value?.isLoading ?: false)
+//            if(!it.isNullOrEmpty()){
+//                hideKeyBoard()
+//            }
+//        })
+//
+//
+//        viewModel.isLoading.observe( viewLifecycleOwner, Observer {
+//            if(it.isLoading){
+//                if(it.isListEmpty){
+//                    rootView.loading.visibility =  View.VISIBLE
+//                }else{
+//                    rootView.loading.visibility = View.GONE
+//                }
+//            }else{
+//               rootView.loading.visibility = View.GONE
+//            }
+//            searchController.setData(viewModel.searchList.value, it.isLoading)
+//        })
     }
 
     override fun onClick(v: View?) {
@@ -132,7 +155,11 @@ class SearchFragment : Fragment(), View.OnClickListener, SearchController.EpoxyS
 
                     if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                         && firstVisibleItemPosition >= 0) {
-                        viewModel.fetchNextPage()
+                            if(isNetworkAvailable()){
+                                viewModel.fetchNextPage()
+                            }else{
+                                Snackbar.make(view!!,getString(R.string.no_internet), Snackbar.LENGTH_SHORT).show()
+                            }
                     }
             }
         })
@@ -150,6 +177,14 @@ class SearchFragment : Fragment(), View.OnClickListener, SearchController.EpoxyS
 
     override fun animeTitleClick(model: AnimeMetaModel) {
         findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToAnimeInfoFragment(categoryUrl = model.categoryUrl))
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = activity?.getSystemService(Context.CONNECTIVITY_SERVICE)
+        return if (connectivityManager is ConnectivityManager) {
+            val networkInfo: NetworkInfo? = connectivityManager.activeNetworkInfo
+            networkInfo?.isConnected ?: false
+        } else false
     }
 
 }

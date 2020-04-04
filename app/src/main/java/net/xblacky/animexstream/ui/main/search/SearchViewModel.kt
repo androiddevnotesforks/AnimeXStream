@@ -6,12 +6,13 @@ import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import net.xblacky.animexstream.utils.CommonViewModel
+import net.xblacky.animexstream.utils.CommonViewModel2
 import net.xblacky.animexstream.utils.constants.C
 import net.xblacky.animexstream.utils.model.AnimeMetaModel
 import net.xblacky.animexstream.utils.parser.HtmlParser
 import okhttp3.ResponseBody
 
-class SearchViewModel : CommonViewModel() {
+class SearchViewModel : CommonViewModel2() {
 
     private val searchRepository = SearchRepository()
     private var _searchList: MutableLiveData<ArrayList<AnimeMetaModel>> = MutableLiveData()
@@ -34,14 +35,11 @@ class SearchViewModel : CommonViewModel() {
                     pageNumber
                 ).subscribeWith(getSearchObserver(C.TYPE_SEARCH_NEW))
             )
-
-            updateError(false, null)
-            this.updateLoading(true)
+            updateLoadingState(loading = Loading.LOADING, e = null, isListEmpty = isListEmpty())
         }
     }
 
     fun fetchNextPage() {
-        updateError(false, null)
         if (_canNextPageLoaded && !super.isLoading()) {
             compositeDisposable.add(
                 searchRepository.fetchSearchList(
@@ -49,7 +47,7 @@ class SearchViewModel : CommonViewModel() {
                     pageNumber
                 ).subscribeWith(getSearchObserver(C.TYPE_SEARCH_UPDATE))
             )
-            this.updateLoading(true)
+            updateLoadingState(loading = Loading.LOADING, e = null, isListEmpty = isListEmpty())
         }
 
 
@@ -58,6 +56,7 @@ class SearchViewModel : CommonViewModel() {
     private fun getSearchObserver(searchType: Int): DisposableObserver<ResponseBody> {
         return object : DisposableObserver<ResponseBody>() {
             override fun onComplete() {
+                updateLoadingState(loading = Loading.COMPLETED, e = null, isListEmpty = isListEmpty())
             }
 
             override fun onNext(response: ResponseBody) {
@@ -73,20 +72,16 @@ class SearchViewModel : CommonViewModel() {
                     updatedList?.addAll(list)
                     _searchList.value = updatedList
                 }
-                updateLoading(false)
                 pageNumber++
             }
 
             override fun onError(e: Throwable) {
-                updateError(true, e)
+                updateLoadingState(loading = Loading.ERROR, e = e, isListEmpty = isListEmpty())
             }
 
         }
     }
 
-    private fun updateLoading(isLoading: Boolean) {
-        super.updateLoading(loading = isLoading, isListEmpty = _searchList.value.isNullOrEmpty())
-    }
 
     override fun onCleared() {
         if(!compositeDisposable.isDisposed){
@@ -95,8 +90,8 @@ class SearchViewModel : CommonViewModel() {
         super.onCleared()
     }
 
-    private fun updateError(show: Boolean, e: Throwable?) {
-        super.updateErrorModel(show = show, e = e, isListEmpty = _searchList.value.isNullOrEmpty())
+    private fun isListEmpty(): Boolean{
+        return _searchList.value.isNullOrEmpty()
     }
 
 }
