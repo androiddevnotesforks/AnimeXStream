@@ -8,8 +8,8 @@
     app:cardBackgroundColor="@color/episode_background"
     android:clickable="true"
     android:id="@+id/cardView"
+    app:cardElevation="0dp"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardElevation="1dp"
     android:focusable="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout

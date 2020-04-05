@@ -15,7 +15,7 @@ import okhttp3.Response
 import okhttp3.ResponseBody
 import timber.log.Timber
 
-class AnimeInfoViewModel : CommonViewModel() {
+class AnimeInfoViewModel(categoryUrl: String) : CommonViewModel() {
 
     private var categoryUrl: String? = null
     private var _animeInfoModel: MutableLiveData<AnimeInfoModel> = MutableLiveData()
@@ -27,10 +27,13 @@ class AnimeInfoViewModel : CommonViewModel() {
     private var _isFavourite: MutableLiveData<Boolean> = MutableLiveData(false)
     var isFavourite: LiveData<Boolean> = _isFavourite
 
-
+    init {
+        this.categoryUrl = categoryUrl
+        fetchAnimeInfo()
+    }
 
     fun fetchAnimeInfo() {
-       updateLoading(loading = true)
+        updateLoading(loading = true)
         updateErrorModel(false, null, false)
         categoryUrl?.let {
             compositeDisposable.add(
@@ -48,10 +51,10 @@ class AnimeInfoViewModel : CommonViewModel() {
                     _animeInfoModel.value = animeInfoModel
                     compositeDisposable.add(
                         animeInfoRepository.fetchEpisodeList(
-                                id = animeInfoModel.id,
-                                endEpisode = animeInfoModel.endEpisode,
-                                alias = animeInfoModel.alias
-                            )
+                            id = animeInfoModel.id,
+                            endEpisode = animeInfoModel.endEpisode,
+                            alias = animeInfoModel.alias
+                        )
                             .subscribeWith(getAnimeInfoObserver(C.TYPE_EPISODE_LIST))
                     )
                     _isFavourite.value = animeInfoRepository.isFavourite(animeInfoModel.id)
@@ -106,15 +109,15 @@ class AnimeInfoViewModel : CommonViewModel() {
         _isFavourite.value = true
     }
 
-    fun setUrl(url: String) {
-        this.categoryUrl = url
-    }
+//    fun setUrl(url: String) {
+//        this.categoryUrl = url
+//    }
 
     override fun onCleared() {
         if (!compositeDisposable.isDisposed) {
             compositeDisposable.dispose()
         }
-        if(isFavourite.value!!){
+        if (isFavourite.value!!) {
             saveFavourite()
         }
         super.onCleared()

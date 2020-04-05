@@ -1,12 +1,14 @@
 package net.xblacky.animexstream.ui.main.player
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.support.v4.media.session.MediaSessionCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +18,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.source.hls.HlsDataSourceFactory
@@ -56,6 +59,8 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     private lateinit var player: SimpleExoPlayer
     private lateinit var trackSelectionFactory: TrackSelection.Factory
     private var trackSelector: DefaultTrackSelector? = null
+    private lateinit var mediaSession: MediaSessionCompat
+    private lateinit var mediaSessionConnector: MediaSessionConnector
 
     private var mappedTrackInfo: MappingTrackSelector.MappedTrackInfo? = null
     private lateinit var audioManager: AudioManager
@@ -78,6 +83,11 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         initializePlayer()
         retainInstance = true
         return rootView
+    }
+
+    override fun onStart() {
+        super.onStart()
+        registerMediaSession()
     }
 
     override fun onDestroy() {
@@ -175,7 +185,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                 refreshData()
             }
             R.id.back -> {
-                activity?.finish()
+                enterPipModeOrExit()
             }
             R.id.nextEpisode -> {
                 playNextEpisode()
@@ -186,10 +196,11 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         }
     }
 
+
     private fun toggleFullView() {
         if (isFullScreen) {
-            exoPlayerFrameLayout.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
-            exoPlayerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT
+//            exoPlayerFrameLayout.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+            exoPlayerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
             player.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
             isFullScreen = false
             context?.let {
@@ -202,7 +213,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             }
 
         } else {
-            exoPlayerFrameLayout.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
+//            exoPlayerFrameLayout.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
             exoPlayerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
             player.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
             isFullScreen = true
@@ -226,18 +237,6 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
     }
 
-
-//    override fun onConfigurationChanged(newConfig: Configuration) {
-//        super.onConfigurationChanged(newConfig)
-//
-//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            goLandscapeMode()
-//
-//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            goPortraitMode()
-//
-//        }
-//    }
 
     private fun playNextEpisode() {
         playOrPausePlayer(playWhenReady = false, loseAudioFocus = false)
@@ -264,28 +263,6 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             }
         }
     }
-
-
-//    private fun updateScreenMode() {
-//        val orientation = activity?.resources?.configuration?.orientation
-//        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            goPortraitMode()
-//        } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            goLandscapeMode()
-//        }
-//    }
-//
-//    private fun goLandscapeMode() {
-//        addFullScreenFlags()
-//        addFullScreenParams()
-//        rootView.exo_full_Screen.setImageResource(R.drawable.ic_minimize)
-//    }
-//
-//    private fun goPortraitMode() {
-//        clearFullScreenFlags()
-//        clearFullScreenParams()
-//        rootView.exo_full_Screen.setImageResource(R.drawable.ic_maximize)
-//    }
 
 
     fun showErrorLayout(show: Boolean, errorMsgId: Int, errorCode: Int) {
@@ -329,56 +306,20 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     }
 
 
-//    private fun addFullScreenFlags() {
-//        activity?.let {
-//            it.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-//                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                    or View.SYSTEM_UI_FLAG_FULLSCREEN)
-//
-//        }
-//    }
-//
-//    private fun clearFullScreenFlags() {
-//        activity?.let {
-//            it.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !sharedPreference.nightMode) {
-//                it.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-//            }
-//        }
-//    }
-
-//    private fun setUnspecifiedOrientation() {
-//
-//
-//        if (isAutoRotateOn()) {
-//            if (::handler.isInitialized) {
-//                handler.removeCallbacksAndMessages(null)
-//            } else {
-//                handler = Handler()
-//            }
-//            handler.postDelayed({
-//                activity?.let {
-//                    it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-//                }
-//            }, 5000)
-//        }
-//    }
-
-
-//    private fun isAutoRotateOn(): Boolean {
-//        return Settings.System.getInt(context?.contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0) == 1
-//    }
-
-
     private fun showDialog() {
         mappedTrackInfo = trackSelector?.currentMappedTrackInfo
-        TrackSelectionDialogBuilder(
-            context,
-            getString(R.string.video_quality),
-            trackSelector,
-            0
 
-        ).build().show()
+        try {
+            TrackSelectionDialogBuilder(
+                context,
+                getString(R.string.video_quality),
+                trackSelector,
+                0
+
+            ).build().show()
+        } catch (ignored: java.lang.NullPointerException) {
+        }
+
 
     }
 
@@ -406,8 +347,9 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                 // querying the cause.
                 if (httpError is InvalidResponseCodeException) {
                     val responseCode = httpError.responseCode
-
-                    content.url = ""
+                    if (responseCode == 410) {
+                        content.url = ""
+                    }
                     showErrorLayout(
                         show = true,
                         errorMsgId = R.string.server_error,
@@ -517,7 +459,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             (activity as VideoPlayerListener).updateWatchedValue(content)
         }
         playOrPausePlayer(false)
-//        unRegisterMediaSession()
+        unRegisterMediaSession()
         super.onStop()
     }
 
@@ -540,27 +482,28 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         }
     }
 
-//    private fun registerMediaSession() {
-//        mediaSession = MediaSessionCompat(context, TAG)
+    private fun registerMediaSession() {
+        mediaSession = MediaSessionCompat(context, TAG)
 //        if (::content.isInitialized) {
 //
-//            val mediaMetadataCompat = MediaMetadataCompat.Builder()
-//                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, content.title)
-//                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, resources.getString(R.string.app_name))
-////                    .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, BitmapFactory.decodeResource(resources, R.drawable.app_icon))
-//                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, content.title)
-//                    .build()
-//
-//            mediaSession.setMetadata(mediaMetadataCompat)
+////            val mediaMetadataCompat = MediaMetadataCompat.Builder()
+////                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, content.title)
+////                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, resources.getString(R.string.app_name))
+//////                    .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, BitmapFactory.decodeResource(resources, R.drawable.app_icon))
+////                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, content.title)
+////                    .build()
+////
+////            mediaSession.setMetadata(mediaMetadataCompat)
 //        }
-//        mediaSessionConnector = MediaSessionConnector(mediaSession)
-//        mediaSessionConnector.setPlayer(player)
-//    }
+        mediaSession.isActive = true
+        mediaSessionConnector = MediaSessionConnector(mediaSession)
+        mediaSessionConnector.setPlayer(player)
+    }
 
-//    private fun unRegisterMediaSession() {
-//        mediaSession.release()
-//        mediaSessionConnector.setPlayer(null)
-//    }
+    private fun unRegisterMediaSession() {
+        mediaSession.release()
+        mediaSessionConnector.setPlayer(null)
+    }
 
     private fun saveWatchedDuration() {
         if (::content.isInitialized) {
@@ -573,12 +516,15 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         }
     }
 
-
-    override fun onStart() {
-        super.onStart()
-//        registerMediaSession()
+    private fun enterPipModeOrExit(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+            && context!!.packageManager
+                .hasSystemFeature(
+                    PackageManager.FEATURE_PICTURE_IN_PICTURE)){
+            exoPlayerView.useController = false
+            activity?.enterPictureInPictureMode()
+        }
     }
-
 
 }
 

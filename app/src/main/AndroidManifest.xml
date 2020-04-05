@@ -26,13 +26,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
-            android:configChanges="density"/>
+            android:name=".MainActivity"/>
         <activity
             android:name=".ui.main.player.VideoPlayerActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/VideoPlayer"
-            tools:ignore="LockedOrientationActivity" />
+            android:supportsPictureInPicture="true"
+            android:launchMode="singleTop"
+            android:configChanges=
+                "screenSize|smallestScreenSize|screenLayout|orientation"
+            tools:ignore="LockedOrientationActivity"
+            tools:targetApi="n" />
 
     </application>
 

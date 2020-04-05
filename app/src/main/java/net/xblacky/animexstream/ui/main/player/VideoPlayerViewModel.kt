@@ -58,7 +58,6 @@ class VideoPlayerViewModel : CommonViewModel() {
     private fun getEpisodeUrlObserver(type: Int): DisposableObserver<ResponseBody> {
         return object : DisposableObserver<ResponseBody>() {
             override fun onComplete() {
-                updateLoading(false)
                 updateErrorModel(show = false, e = null, isListEmpty = false)
             }
 
@@ -84,6 +83,7 @@ class VideoPlayerViewModel : CommonViewModel() {
                         content?.url = it
                         _content.value = content
                         saveContent(content!!)
+                        updateLoading(false)
                     }
                 }
 

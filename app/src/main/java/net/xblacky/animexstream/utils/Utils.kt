@@ -1,6 +1,9 @@
 package net.xblacky.animexstream.utils
 
+import android.content.Context
+import android.util.DisplayMetrics
 import net.xblacky.animexstream.utils.constants.C
+
 
 class Utils {
     companion object{
@@ -17,6 +20,15 @@ class Utils {
                 C.TYPE_NEW_SEASON-> "New Season"
                 else -> "Default"
             }
+        }
+
+        fun calculateNoOfColumns(
+            context: Context,
+            columnWidthDp: Float
+        ): Int {
+            val displayMetrics: DisplayMetrics = context.resources.displayMetrics
+            val screenWidthDp = displayMetrics.widthPixels / displayMetrics.density
+            return (screenWidthDp / columnWidthDp + 0.5).toInt()
         }
 
         fun getPositionByType(typeValue: Int): Int{

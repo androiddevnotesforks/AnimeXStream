@@ -22,18 +22,17 @@ import net.xblacky.animexstream.ui.main.animeinfo.epoxy.AnimeInfoController
 import net.xblacky.animexstream.ui.main.home.HomeFragment
 import net.xblacky.animexstream.utils.ItemOffsetDecoration
 import net.xblacky.animexstream.utils.Tags.GenreTags
+import net.xblacky.animexstream.utils.Utils
 import net.xblacky.animexstream.utils.model.AnimeInfoModel
 import timber.log.Timber
 
 class AnimeInfoFragment : Fragment() {
 
     private lateinit var rootView: View
+    private lateinit var viewModelFactory: AnimeInfoViewModelFactory
     private lateinit var viewModel: AnimeInfoViewModel
     private lateinit var episodeController: AnimeInfoController
 
-    companion object {
-        fun newInstance() = HomeFragment()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,21 +40,16 @@ class AnimeInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         rootView = inflater.inflate(R.layout.fragment_animeinfo, container, false)
-        viewModel = ViewModelProvider(this).get(AnimeInfoViewModel::class.java)
-        getBundleData()
+        viewModelFactory = AnimeInfoViewModelFactory(AnimeInfoFragmentArgs.fromBundle(arguments!!).categoryUrl!!)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(AnimeInfoViewModel::class.java)
         setupRecyclerView()
         setObserver()
         transitionListener()
         setOnClickListeners()
-        viewModel.fetchAnimeInfo()
         return rootView
     }
 
 
-    private fun getBundleData(){
-        val args =AnimeInfoFragmentArgs.fromBundle(bundle = arguments!!)
-        viewModel.setUrl(args.categoryUrl!!)
-    }
 
     private fun setObserver() {
         viewModel.animeInfoModel.observe(viewLifecycleOwner, Observer {
@@ -111,12 +105,12 @@ class AnimeInfoFragment : Fragment() {
 
     private fun setupRecyclerView(){
         episodeController = AnimeInfoController()
-        episodeController.spanCount = 3
+        episodeController.spanCount = Utils.calculateNoOfColumns(context!!, 150f)
         rootView.animeInfoRecyclerView.adapter = episodeController.adapter
         val itemOffsetDecoration = ItemOffsetDecoration(context, R.dimen.episode_offset_left)
         rootView.animeInfoRecyclerView.addItemDecoration(itemOffsetDecoration)
         rootView.animeInfoRecyclerView.apply {
-            layoutManager = GridLayoutManager(context,3)
+            layoutManager = GridLayoutManager(context,Utils.calculateNoOfColumns(context!!, 150f))
             (layoutManager as GridLayoutManager).spanSizeLookup = episodeController.spanSizeLookup
 
         }

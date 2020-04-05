@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/exoPlayerFrameLayout"
             android:layout_gravity="center"
-            app:resize_mode="fit">
+            app:resize_mode="fill">
 
         <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/exoPlayerView"
@@ -33,9 +33,10 @@
             app:show_buffering="when_playing"
             app:resize_mode="fit"
             app:show_timeout="3000"
+            app:scrubber_color="#0c0c0c"
+            app:played_color="#191919"
             app:scrubber_dragged_size="25dp"
             app:controller_layout_id="@layout/exo_player_custom_controls"
-            app:use_artwork="true"
             app:rewind_increment="10000"
             app:fastforward_increment="10000"/>
         </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>

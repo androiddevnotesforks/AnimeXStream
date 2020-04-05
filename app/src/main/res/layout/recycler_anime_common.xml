@@ -5,11 +5,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:clipToPadding="false"
-    android:layout_gravity="center"
+    android:foreground="?selectableItemBackgroundBorderless"
     android:layout_marginBottom="20dp"
-    android:id="@+id/root"
-    android:background="?selectableItemBackgroundBorderless"
-    android:orientation="vertical">
+    android:id="@+id/root">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/animeCardView"
@@ -17,6 +15,8 @@
         android:layout_height="180dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/animeTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 

@@ -21,8 +21,6 @@ abstract class EpisodeModel : EpoxyModelWithHolder<EpisodeModel.HomeHeaderHolder
     @EpoxyAttribute
     lateinit var clickListener: View.OnClickListener
     @EpoxyAttribute
-    var watched: Boolean = false
-    @EpoxyAttribute
     var watchedProgress: Long = 0
 
 

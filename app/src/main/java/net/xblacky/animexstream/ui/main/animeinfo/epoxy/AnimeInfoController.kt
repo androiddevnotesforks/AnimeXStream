@@ -21,7 +21,6 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>(){
                 .spanSizeOverride { totalSpanCount, _, _ ->
                     totalSpanCount/totalSpanCount
                 }
-                .watched(isWatchedHelper.isWatched(it.episodeurl.hashCode()))
                 .watchedProgress(isWatchedHelper.getWatchedDuration(it.episodeurl.hashCode()))
                 .addTo(this)
         }

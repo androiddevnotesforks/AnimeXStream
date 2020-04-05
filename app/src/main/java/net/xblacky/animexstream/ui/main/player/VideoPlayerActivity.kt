@@ -1,11 +1,14 @@
 package net.xblacky.animexstream.ui.main.player
 
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.activity_video_player.*
+import kotlinx.android.synthetic.main.fragment_video_player.*
 import net.xblacky.animexstream.R
 import net.xblacky.animexstream.utils.model.Content
 
@@ -26,6 +29,26 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
 //        ))
         setObserver()
         goFullScreen()
+    }
+
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            enterPictureInPictureMode()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
+            finishAndRemoveTask()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        exoPlayerView.useController = false
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
