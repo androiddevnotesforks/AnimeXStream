@@ -8,7 +8,7 @@
     <color name="app_background">#FFFFFF</color>
     <color name="header">#212121</color>
     <color name="text_default">#808080</color>
-    <color name="progress">#f3f3f3</color>
+    <color name="progress">#e5e5e5</color>
     <color name="secondary_background">#EAEAEB</color>
 
     //Home Fragment
@@ -45,7 +45,7 @@
     <color name="types_value">#3D3838</color>
 
     //AnimeInfo Episodes
-    <color name="episode_background">@color/app_background</color>
+    <color name="episode_background">#f8f8f8</color>
     <color name="episode_watched_progress">@color/progress</color>
     <color name="episode_text">#776E6E</color>
 

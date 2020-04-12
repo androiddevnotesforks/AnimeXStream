@@ -60,7 +60,7 @@ class EpisodeRepository {
     fun saveContent(content: Content){
         try {
             content.insertionTime = System.currentTimeMillis()
-            realm.executeTransaction { realm1: Realm ->
+            realm.executeTransactionAsync { realm1: Realm ->
                 realm1.insertOrUpdate(content)
             }
 
@@ -72,7 +72,7 @@ class EpisodeRepository {
                 animeName = content.animeName
 
             )
-            realm.executeTransaction {
+            realm.executeTransactionAsync {
                 it.insertOrUpdate(watchedEpisode)
             }
         } catch (ignored: Exception) {
