@@ -2,6 +2,7 @@ package net.xblacky.animexstream.ui.main.player
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.android.exoplayer2.upstream.HttpDataSource
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import net.xblacky.animexstream.utils.CommonViewModel
@@ -9,6 +10,7 @@ import net.xblacky.animexstream.utils.constants.C
 import net.xblacky.animexstream.utils.model.Content
 import net.xblacky.animexstream.utils.parser.HtmlParser
 import okhttp3.ResponseBody
+import retrofit2.HttpException
 
 class VideoPlayerViewModel : CommonViewModel() {
 
@@ -36,12 +38,12 @@ class VideoPlayerViewModel : CommonViewModel() {
                     fetchFromInternet(it)
                 }
             } else {
-               fetchFromInternet(it)
+                fetchFromInternet(it)
             }
         }
     }
 
-    private fun fetchFromInternet(url: String){
+    private fun fetchFromInternet(url: String) {
         compositeDisposable.add(
             episodeRepository.fetchEpisodeMediaUrl(url = url).subscribeWith(
                 getEpisodeUrlObserver(
@@ -78,13 +80,11 @@ class VideoPlayerViewModel : CommonViewModel() {
                     _content.value?.nextEpisodeUrl = episodeInfo.nextEpisodeUrl
                 } else if (type == C.TYPE_M3U8_URL) {
                     val m3u8Url = HtmlParser.parseM3U8Url(response = response.string())
-                    m3u8Url?.let {
-                        val content = _content.value
-                        content?.url = it
-                        _content.value = content
-                        saveContent(content!!)
-                        updateLoading(false)
-                    }
+                    val content = _content.value
+                    content?.url = m3u8Url
+                    _content.value = content
+                    saveContent(content!!)
+                    updateLoading(false)
                 }
 
             }

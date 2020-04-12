@@ -5,7 +5,6 @@ import android.view.View
 import com.airbnb.epoxy.TypedEpoxyController
 import net.xblacky.animexstream.ui.main.player.VideoPlayerActivity
 import net.xblacky.animexstream.utils.model.EpisodeModel
-import net.xblacky.animexstream.utils.model.WatchedEpisode
 
 class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>(){
     var animeName: String = ""
@@ -40,6 +39,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>(){
         intent.putExtra("episodeUrl",episodeModel.episodeurl)
         intent.putExtra("episodeNumber",episodeModel.episodeNumber)
         intent.putExtra("animeName",animeName)
+//        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         clickedView.context.startActivity(intent)
     }
 

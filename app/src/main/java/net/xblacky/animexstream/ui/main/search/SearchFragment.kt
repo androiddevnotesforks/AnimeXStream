@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,8 +57,8 @@ class SearchFragment : Fragment(), View.OnClickListener,
     }
 
     private fun setEditTextListener() {
-        rootView.searchEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+        rootView.searchEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || event.action == KeyEvent.ACTION_DOWN) {
                 hideKeyBoard()
                 rootView.searchEditText.clearFocus()
                 viewModel.fetchSearchList(v.text.toString().trim())
@@ -106,6 +107,7 @@ class SearchFragment : Fragment(), View.OnClickListener,
                 if (it.loading == CommonViewModel2.Loading.LOADING) rootView.loading.visibility =
                     View.VISIBLE
                 //TODO Error Visibiity GONE
+
                 else if (it.loading == CommonViewModel2.Loading.ERROR
                 //Todo Error visisblity visible
                 ) rootView.loading.visibility = View.GONE

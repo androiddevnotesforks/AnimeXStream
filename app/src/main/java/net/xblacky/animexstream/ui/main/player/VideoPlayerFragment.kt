@@ -1,7 +1,6 @@
 package net.xblacky.animexstream.ui.main.player
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.net.Uri
@@ -19,16 +18,17 @@ import androidx.fragment.app.Fragment
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
+import com.google.android.exoplayer2.source.dash.DashMediaSource
+import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource
 import com.google.android.exoplayer2.source.hls.HlsDataSourceFactory
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.*
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder
-import com.google.android.exoplayer2.upstream.DataSpec
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import com.google.android.exoplayer2.upstream.HttpDataSource
+import com.google.android.exoplayer2.upstream.*
 import com.google.android.exoplayer2.upstream.HttpDataSource.InvalidResponseCodeException
 import kotlinx.android.synthetic.main.error_screen_video_player.view.*
 import kotlinx.android.synthetic.main.exo_player_custom_controls.*
@@ -70,6 +70,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     private val DUCK_MEDIA_VOLUME = 0.2f
     private lateinit var handler: Handler
     private var isFullScreen = false
+    private var isVideoPlaying: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -129,20 +130,34 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
     private fun buildMediaSource(uri: Uri): MediaSource {
 
-        return HlsMediaSource.Factory(
-            HlsDataSourceFactory {
-                val dataSource: HttpDataSource =
-                    DefaultHttpDataSource("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36")
-                dataSource.setRequestProperty("Referer", "https://vidstreaming.io/")
-                dataSource
-            })
-            .setAllowChunklessPreparation(true)
-            .createMediaSource(uri)
+
+        val lastPath = uri.lastPathSegment
+        val defaultDataSourceFactory = DefaultHttpDataSourceFactory("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36")
+
+        if(lastPath!!.contains("m3u8")){
+            return HlsMediaSource.Factory(
+                HlsDataSourceFactory {
+                    val dataSource: HttpDataSource =
+                        DefaultHttpDataSource("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36")
+                    dataSource.setRequestProperty("Referer", "https://vidstreaming.io/")
+                    dataSource
+                })
+                .setAllowChunklessPreparation(true)
+                .createMediaSource(uri)
+        }else{
+//            val dashChunkSourceFactory = DefaultDashChunkSource.Factory(defaultDataSourceFactory)
+            return ExtractorMediaSource.Factory(defaultDataSourceFactory)
+                .createMediaSource(uri)
+        }
+
     }
 
     fun updateContent(content: Content) {
+        Timber.e("Content Updated uRL: ${content.url}")
         this.content = content
         episodeName.text = content.episodeName
+        exoPlayerView.videoSurfaceView.visibility =View.GONE
+
         this.content.nextEpisodeUrl?.let {
             nextEpisode.visibility = View.VISIBLE
         } ?: kotlin.run {
@@ -153,7 +168,11 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         } ?: kotlin.run {
             previousEpisode.visibility = View.GONE
         }
-        updateVideoUrl(URLDecoder.decode(content.url, StandardCharsets.UTF_8.name()))
+        if(!content.url.isNullOrEmpty()){
+            updateVideoUrl(URLDecoder.decode(content.url, StandardCharsets.UTF_8.name()))
+        }else{
+            showErrorLayout(show = true, errorCode = RESPONSE_UNKNOWN, errorMsgId = R.string.server_error)
+        }
 
     }
 
@@ -185,7 +204,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                 refreshData()
             }
             R.id.back -> {
-                enterPipModeOrExit()
+                (activity as VideoPlayerActivity).enterPipModeOrExit()
             }
             R.id.nextEpisode -> {
                 playNextEpisode()
@@ -338,6 +357,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     }
 
     override fun onPlayerError(error: ExoPlaybackException?) {
+        isVideoPlaying = false
         if (error!!.type === ExoPlaybackException.TYPE_SOURCE) {
             val cause: IOException = error!!.sourceException
             if (cause is HttpDataSource.HttpDataSourceException) {
@@ -347,9 +367,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                 // querying the cause.
                 if (httpError is InvalidResponseCodeException) {
                     val responseCode = httpError.responseCode
-                    if (responseCode == 410) {
                         content.url = ""
-                    }
                     showErrorLayout(
                         show = true,
                         errorMsgId = R.string.server_error,
@@ -370,14 +388,20 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-        if (playbackState == Player.STATE_READY) {
-            showLoading(false)
-        }
-        if (playbackState == Player.STATE_BUFFERING) {
-            showLoading(false)
-        }
-        if (playbackState == Player.STATE_READY && playWhenReady) {
+        isVideoPlaying = playWhenReady
+        if (playbackState == Player.STATE_READY  && playWhenReady) {
+            rootView.exo_play.setImageResource(R.drawable.ic_media_play)
+            rootView.exo_pause.setImageResource(R.drawable.ic_media_pause)
             playOrPausePlayer(true)
+
+        }
+        if (playbackState == Player.STATE_BUFFERING  && playWhenReady) {
+            rootView.exo_play.setImageResource(0)
+            rootView.exo_pause.setImageResource(0)
+            showLoading(false)
+        }
+        if (playbackState == Player.STATE_READY) {
+            exoPlayerView.videoSurfaceView.visibility = View.VISIBLE
         }
     }
 
@@ -440,7 +464,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         }
     }
 
-    private fun playOrPausePlayer(playWhenReady: Boolean, loseAudioFocus: Boolean = true) {
+    fun playOrPausePlayer(playWhenReady: Boolean, loseAudioFocus: Boolean = true) {
         if (playWhenReady && requestAudioFocus()) {
             player.playWhenReady = true
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -505,7 +529,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         mediaSessionConnector.setPlayer(null)
     }
 
-    private fun saveWatchedDuration() {
+     fun saveWatchedDuration() {
         if (::content.isInitialized) {
             val watchedDuration = player.currentPosition
             content.duration = player.duration
@@ -516,14 +540,8 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         }
     }
 
-    private fun enterPipModeOrExit(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-            && context!!.packageManager
-                .hasSystemFeature(
-                    PackageManager.FEATURE_PICTURE_IN_PICTURE)){
-            exoPlayerView.useController = false
-            activity?.enterPictureInPictureMode()
-        }
+    fun isVideoPlaying(): Boolean{
+        return isVideoPlaying
     }
 
 }

@@ -157,11 +157,11 @@ class HtmlParser {
         }
 
         fun parseMediaUrl(response: String): EpisodeInfo{
-            var mediaUrl: String?
+            val mediaUrl: String?
             val document = Jsoup.parse(response)
-            val info = document.getElementsByClass("vidcdn").first().select("a")
+            val info = document.getElementsByClass("anime").first().select("a")
             mediaUrl = info.attr("data-video").toString()
-            mediaUrl = mediaUrl.replace("load", "server")
+//            mediaUrl = mediaUrl.replace("load", "streaming")
             val nextEpisodeUrl = document.getElementsByClass("anime_video_body_episodes_r")?.select("a")?.first()?.attr("href")
             val previousEpisodeUrl = document.getElementsByClass("anime_video_body_episodes_l")?.select("a")?.first()?.attr("href")
 
@@ -173,15 +173,15 @@ class HtmlParser {
         }
 
         fun parseM3U8Url(response: String): String?{
-            var m3u8Url: String? = null
+            var m3u8Url: String?= ""
             val document = Jsoup.parse(response)
             val info = document.getElementsByClass("videocontent")
             val pattern = Pattern.compile(C.M3U8_REGEX_PATTERN)
             val matcher = pattern.matcher(info.toString())
             return try{
                 while (matcher.find()){
-                    Timber.e(matcher.group(0))
-                    if( matcher.group(0)!!.contains("m3u8")){
+                    Timber.e(matcher.group((0)))
+                    if( matcher.group(0)!!.contains("m3u8") || matcher.group(0)!!.contains("googlevideo")){
                         m3u8Url =  matcher.group(0)
                         break
                     }

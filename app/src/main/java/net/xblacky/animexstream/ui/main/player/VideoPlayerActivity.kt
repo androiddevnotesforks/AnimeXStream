@@ -1,16 +1,26 @@
 package net.xblacky.animexstream.ui.main.player
 
+import android.app.AppOpsManager
+import android.app.PictureInPictureParams
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.activity_video_player.*
 import kotlinx.android.synthetic.main.fragment_video_player.*
+import net.xblacky.animexstream.MainActivity
 import net.xblacky.animexstream.R
 import net.xblacky.animexstream.utils.model.Content
+import timber.log.Timber
+import java.lang.Exception
 
 class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
 
@@ -22,7 +32,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_player)
         viewModel = ViewModelProvider(this).get(VideoPlayerViewModel::class.java)
-        getExtra()
+        getExtra(intent)
 //        (playerFragment as VideoPlayerFragment).updateContent(Content(
 //            url = url,
 //            episodeNumber = "153"
@@ -31,24 +41,25 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
         goFullScreen()
     }
 
-    override fun onUserLeaveHint() {
-        super.onUserLeaveHint()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            enterPictureInPictureMode()
-        }
+    override fun onNewIntent(intent: Intent?) {
+        (playerFragment as VideoPlayerFragment).playOrPausePlayer(
+            playWhenReady = false,
+            loseAudioFocus = false
+        )
+        (playerFragment as VideoPlayerFragment).saveWatchedDuration()
+        getExtra(intent)
+        super.onNewIntent(intent)
+
     }
 
-    override fun onStop() {
-        super.onStop()
-        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
-            finishAndRemoveTask()
-        }
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        enterPipMode()
     }
+
 
     override fun onResume() {
         super.onResume()
-        exoPlayerView.useController = false
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -58,26 +69,121 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
         }
     }
 
-    private fun getExtra() {
-        val url = intent.extras?.getString("episodeUrl")
-        episodeNumber = intent.extras?.getString("episodeNumber")
-        animeName = intent.extras?.getString("animeName")
+    private fun getExtra(intent: Intent?) {
+        val url = intent?.extras?.getString("episodeUrl")
+        episodeNumber = intent?.extras?.getString("episodeNumber")
+        animeName = intent?.extras?.getString("animeName")
         viewModel.updateEpisodeContent(
             Content(
                 animeName = animeName ?: "",
                 episodeUrl = url,
                 episodeName = animeName!! + " (" + episodeNumber!! + ")",
                 url = ""
-                )
+            )
         )
         viewModel.fetchEpisodeMediaUrl()
+    }
+
+    @Suppress("DEPRECATION")
+    private fun enterPipMode() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+            && packageManager
+                .hasSystemFeature(
+                    PackageManager.FEATURE_PICTURE_IN_PICTURE
+                )
+            && hasPipPermission()
+            && (playerFragment as VideoPlayerFragment).isVideoPlaying()
+        ) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val params = PictureInPictureParams.Builder()
+                this.enterPictureInPictureMode(params.build())
+            } else {
+                this.enterPictureInPictureMode()
+            }
+        }
+    }
+
+    override fun onStop() {
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+            &&  hasPipPermission()
+        ) {
+            finishAndRemoveTask()
+        }
+        super.onStop()
+    }
+
+    override fun finish() {
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+        ) {
+            finishAndRemoveTask()
+        }
+        super.finish()
+    }
+
+    fun enterPipModeOrExit() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+            && packageManager
+                .hasSystemFeature(
+                    PackageManager.FEATURE_PICTURE_IN_PICTURE
+                )
+            && (playerFragment as VideoPlayerFragment).isVideoPlaying()
+            && hasPipPermission()
+        ) {
+            try{
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val params = PictureInPictureParams.Builder()
+                    this.enterPictureInPictureMode(params.build())
+                } else {
+                    this.enterPictureInPictureMode()
+                }
+            }catch (ex:Exception){
+                Timber.e(ex.message)
+            }
+
+        } else {
+            finish()
+
+        }
+    }
+
+    override fun onPictureInPictureModeChanged(
+        isInPictureInPictureMode: Boolean,
+        newConfig: Configuration?
+    ) {
+        exoPlayerView.useController = !isInPictureInPictureMode
+    }
+
+    private fun hasPipPermission(): Boolean {
+        val appsOps = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        return when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                appsOps.unsafeCheckOpNoThrow(
+                    AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
+                    android.os.Process.myUid(),
+                    packageName
+                ) == AppOpsManager.MODE_ALLOWED
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
+                appsOps.checkOpNoThrow(
+                    AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
+                    android.os.Process.myUid(),
+                    packageName
+                ) == AppOpsManager.MODE_ALLOWED
+            }
+            else -> {
+                false
+            }
+        }
     }
 
     private fun setObserver() {
         viewModel.liveContent.observe(this, Observer {
             this.content = it
             it?.let {
-                if(!it.url.isNullOrEmpty()){
+                if (!it.url.isNullOrEmpty()) {
                     (playerFragment as VideoPlayerFragment).updateContent(it)
                 }
             }
@@ -86,8 +192,16 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
             (playerFragment as VideoPlayerFragment).showLoading(it.isLoading)
         })
         viewModel.errorModel.observe(this, Observer {
-            (playerFragment as VideoPlayerFragment).showErrorLayout(it.show, it.errorMsgId, it.errorCode)
+            (playerFragment as VideoPlayerFragment).showErrorLayout(
+                it.show,
+                it.errorMsgId,
+                it.errorCode
+            )
         })
+    }
+
+    override fun onBackPressed() {
+        enterPipModeOrExit()
     }
 
     private fun goFullScreen() {
@@ -97,7 +211,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
     }
 
     override fun updateWatchedValue(content: Content) {
-       viewModel.saveContent(content)
+        viewModel.saveContent(content)
     }
 
     override fun playNextEpisode() {
@@ -105,7 +219,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
             Content(
                 episodeUrl = content.nextEpisodeUrl,
                 episodeName = "$animeName (EP ${incrimentEpisodeNumber(content.episodeName!!)})",
-                url="",
+                url = "",
                 animeName = content.animeName
             )
         )
@@ -113,43 +227,50 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
 
     }
 
-    override fun playPreviousEpisode(){
+    override fun playPreviousEpisode() {
 
         viewModel.updateEpisodeContent(
             Content(
                 episodeUrl = content.previousEpisodeUrl,
                 episodeName = "$animeName (EP ${decrimentEpisodeNumber(content.episodeName!!)})",
-                url="",
+                url = "",
                 animeName = content.animeName
             )
         )
         viewModel.fetchEpisodeMediaUrl()
     }
 
-    private fun incrimentEpisodeNumber(episodeName: String): String{
-        return try{
-            val episodeString = episodeName.substring(episodeName.lastIndexOf(' ')+1, episodeName.lastIndexOf(')'))
+    private fun incrimentEpisodeNumber(episodeName: String): String {
+        return try {
+            val episodeString = episodeName.substring(
+                episodeName.lastIndexOf(' ') + 1,
+                episodeName.lastIndexOf(')')
+            )
             var episodeNumber = Integer.parseInt(episodeString)
             episodeNumber++
             episodeNumber.toString()
 
-        }catch (obe: ArrayIndexOutOfBoundsException){
+        } catch (obe: ArrayIndexOutOfBoundsException) {
             ""
         }
     }
-    private fun decrimentEpisodeNumber(episodeName: String): String{
-        return try{
-            val episodeString = episodeName.substring(episodeName.lastIndexOf(' ')+1, episodeName.lastIndexOf(')'))
+
+    private fun decrimentEpisodeNumber(episodeName: String): String {
+        return try {
+            val episodeString = episodeName.substring(
+                episodeName.lastIndexOf(' ') + 1,
+                episodeName.lastIndexOf(')')
+            )
             var episodeNumber = Integer.parseInt(episodeString)
             episodeNumber--
             episodeNumber.toString()
 
-        }catch (obe: ArrayIndexOutOfBoundsException){
+        } catch (obe: ArrayIndexOutOfBoundsException) {
             ""
         }
     }
 
-    fun refreshM3u8Url(){
+    fun refreshM3u8Url() {
 
         viewModel.fetchEpisodeMediaUrl(fetchFromDb = false)
     }

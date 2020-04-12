@@ -19,12 +19,10 @@ import kotlinx.android.synthetic.main.fragment_animeinfo.view.animeInfoRoot
 import kotlinx.android.synthetic.main.loading.view.*
 import net.xblacky.animexstream.R
 import net.xblacky.animexstream.ui.main.animeinfo.epoxy.AnimeInfoController
-import net.xblacky.animexstream.ui.main.home.HomeFragment
 import net.xblacky.animexstream.utils.ItemOffsetDecoration
 import net.xblacky.animexstream.utils.Tags.GenreTags
 import net.xblacky.animexstream.utils.Utils
 import net.xblacky.animexstream.utils.model.AnimeInfoModel
-import timber.log.Timber
 
 class AnimeInfoFragment : Fragment() {
 
