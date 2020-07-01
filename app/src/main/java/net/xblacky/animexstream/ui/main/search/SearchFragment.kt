@@ -46,8 +46,13 @@ class SearchFragment : Fragment(), View.OnClickListener,
         setAdapters()
         setRecyclerViewScroll()
         setEditTextListener()
-        showKeyBoard()
         return rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setEditTextFocus()
+        showKeyBoard()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -68,6 +73,10 @@ class SearchFragment : Fragment(), View.OnClickListener,
         })
     }
 
+
+    private fun setEditTextFocus() {
+        rootView.searchEditText.requestFocus()
+    }
 
     private fun setOnClickListeners() {
         rootView.backButton.setOnClickListener(this)
