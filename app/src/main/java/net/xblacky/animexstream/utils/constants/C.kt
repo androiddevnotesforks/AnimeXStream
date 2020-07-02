@@ -15,6 +15,9 @@ class C {
         const val EPISODE_LOAD_URL = "https://ajax.gogocdn.net/ajax/load-list-episode"
         const val SEARCH_URL = "/search.html"
 
+
+        const val SUGGESTION_URL = "https://vidstreaming.io/ajax-search.html"
+
         //Model Type
         const val TYPE_RECENT_SUB = 1
         const val TYPE_POPULAR_ANIME =2
