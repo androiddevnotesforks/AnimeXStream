@@ -1,15 +1,16 @@
 package net.xblacky.animexstream.utils.parser
 
+import com.google.android.gms.common.api.Api
 import io.realm.RealmList
 import net.xblacky.animexstream.utils.constants.C
 import net.xblacky.animexstream.utils.model.*
-import org.json.JSONObject
+import net.xblacky.animexstream.utils.rertofit.RetrofitHelper.getRetrofitInstance
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import retrofit2.Call
 import timber.log.Timber
-import java.lang.NullPointerException
 import java.util.regex.Pattern
+
 
 class HtmlParser {
 
@@ -184,7 +185,7 @@ class HtmlParser {
         }
 
         fun parseSuggestions(response: String): ArrayList<String> {
-            val document = Jsoup.parse(JSONObject(response)["content"] as? String ?: "")
+            val document = Jsoup.parse(response)
             val li = document.select("li")
             val list = ArrayList<String>()
             li?.forEach {
