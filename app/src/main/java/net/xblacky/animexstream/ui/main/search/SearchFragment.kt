@@ -76,7 +76,6 @@ class SearchFragment : Fragment(), View.OnClickListener,
     private fun configureEditText() {
         suggestionsAdapter = SuggestionsAdapter(rootView.context, android.R.layout.simple_list_item_1, this)
         rootView.searchEditText.setAdapter(suggestionsAdapter)
-        rootView.searchEditText.threshold = 3
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

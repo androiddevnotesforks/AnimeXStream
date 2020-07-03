@@ -2,17 +2,18 @@ package net.xblacky.animexstream.ui.main.search
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
-import net.xblacky.animexstream.utils.CommonViewModel
 import net.xblacky.animexstream.utils.CommonViewModel2
 import net.xblacky.animexstream.utils.constants.C
 import net.xblacky.animexstream.utils.model.AnimeMetaModel
+import net.xblacky.animexstream.utils.model.SuggestionModel
 import net.xblacky.animexstream.utils.parser.HtmlParser
 import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Response
 
-class SearchViewModel : CommonViewModel2() {
+class SearchViewModel : CommonViewModel2(), retrofit2.Callback<SuggestionModel> {
 
     private val searchRepository = SearchRepository()
     private var _searchList: MutableLiveData<ArrayList<AnimeMetaModel>> = MutableLiveData()
@@ -29,11 +30,7 @@ class SearchViewModel : CommonViewModel2() {
         val list = _suggestionsList.value
         list?.clear()
         _suggestionsList.value = list
-        compositeDisposable.add(
-                searchRepository.fetchSearchSuggestions(
-                    keyword
-                ).subscribeWith(getSuggestionsObserver())
-        )
+        searchRepository.fetchSearchSuggestions(keyword).enqueue(this)
     }
 
     fun fetchSearchList(keyword: String) {
@@ -62,19 +59,6 @@ class SearchViewModel : CommonViewModel2() {
                 ).subscribeWith(getSearchObserver(C.TYPE_SEARCH_UPDATE))
             )
             updateLoadingState(loading = Loading.LOADING, e = null, isListEmpty = isListEmpty())
-        }
-    }
-
-    private fun getSuggestionsObserver(): DisposableObserver<ResponseBody> {
-        return object : DisposableObserver<ResponseBody>() {
-            override fun onComplete() {}
-
-            override fun onNext(response: ResponseBody) {
-                val list = HtmlParser.parseSuggestions(response.string())
-                _suggestionsList.value = list
-            }
-
-            override fun onError(e: Throwable) {}
         }
     }
 
@@ -117,6 +101,15 @@ class SearchViewModel : CommonViewModel2() {
 
     private fun isListEmpty(): Boolean{
         return _searchList.value.isNullOrEmpty()
+    }
+
+    override fun onFailure(call: Call<SuggestionModel>, t: Throwable) {}
+
+    override fun onResponse(call: Call<SuggestionModel>, response: Response<SuggestionModel>) {
+        response.body()?.content?.let {
+            val list = HtmlParser.parseSuggestions(it)
+            _suggestionsList.value = list
+        }
     }
 
 }
