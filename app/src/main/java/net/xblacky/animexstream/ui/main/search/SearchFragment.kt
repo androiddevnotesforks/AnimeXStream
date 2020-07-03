@@ -20,7 +20,7 @@ import net.xblacky.animexstream.utils.connectivity.base.ConnectivityProvider
 import kotlinx.android.synthetic.main.fragment_search.view.*
 import kotlinx.android.synthetic.main.loading.view.*
 import net.xblacky.animexstream.R
-import net.xblacky.animexstream.ui.main.search.adapter.Suggestions
+import net.xblacky.animexstream.ui.main.search.adapter.SuggestionsAdapter
 import net.xblacky.animexstream.ui.main.search.epoxy.SearchController
 import net.xblacky.animexstream.utils.CommonViewModel2
 import net.xblacky.animexstream.utils.ItemOffsetDecoration
@@ -29,6 +29,7 @@ import net.xblacky.animexstream.utils.model.AnimeMetaModel
 
 
 class SearchFragment : Fragment(), View.OnClickListener,
+    SuggestionsAdapter.SuggestionsFilter.SuggestionAdapterCallbacks,
     SearchController.EpoxySearchAdapterCallbacks, ConnectivityProvider.ConnectivityStateListener {
 
     private val provider: ConnectivityProvider by lazy { ConnectivityProvider.createProvider(this.requireContext()) }
@@ -36,6 +37,8 @@ class SearchFragment : Fragment(), View.OnClickListener,
     private lateinit var rootView: View
     private lateinit var viewModel: SearchViewModel
     private lateinit var searchController: SearchController
+    private lateinit var suggestionsAdapter: SuggestionsAdapter
+
     private var isNetworkAvailable = false
 
     override fun onCreateView(
@@ -71,7 +74,8 @@ class SearchFragment : Fragment(), View.OnClickListener,
     }
 
     private fun configureEditText() {
-        rootView.searchEditText.setAdapter(Suggestions(rootView.context, android.R.layout.simple_list_item_1))
+        suggestionsAdapter = SuggestionsAdapter(rootView.context, android.R.layout.simple_list_item_1, this)
+        rootView.searchEditText.setAdapter(suggestionsAdapter)
         rootView.searchEditText.threshold = 3
     }
 
@@ -129,6 +133,10 @@ class SearchFragment : Fragment(), View.OnClickListener,
     }
 
     private fun setObserver() {
+        viewModel.suggestionsList.observe(viewLifecycleOwner, Observer {
+            suggestionsAdapter.setResults(it)
+        })
+
         viewModel.loadingModel.observe(viewLifecycleOwner, Observer {
             if(it == null){
                 setEditTextFocus()
@@ -218,5 +226,9 @@ class SearchFragment : Fragment(), View.OnClickListener,
                 categoryUrl = model.categoryUrl
             )
         )
+    }
+
+    override fun findSuggestions(hint: String) {
+        viewModel.fetchSuggestionsList(hint)
     }
 }
