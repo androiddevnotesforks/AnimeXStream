@@ -123,4 +123,13 @@ class NetworkInterface {
         ): Observable<ResponseBody>
     }
 
+    interface FetchSearchSuggestionData{
+        @Headers(
+            C.XML_HTTP_REQUEST
+        )
+        @GET(C.SUGGESTION_URL)
+        fun get(
+            @Query("keyword") keyword: String
+        ): Observable<ResponseBody>
+    }
 }
