@@ -161,7 +161,7 @@ class SearchFragment : Fragment(), View.OnClickListener,
                         ).show()
                     }
                     CommonViewModel2.Loading.LOADING -> {
-                        rootView.loading.visibility = View.VISIBLE
+                        if(it.isListEmpty) rootView.loading.visibility = View.VISIBLE
                     }
 
                 }
@@ -228,7 +228,8 @@ class SearchFragment : Fragment(), View.OnClickListener,
         )
     }
 
-    override fun findSuggestions(hint: String) {
-        viewModel.fetchSuggestionsList(hint)
+    override fun findSuggestions(hint: String, newQuery: Boolean) {
+        if(newQuery) viewModel.fetchSuggestionsList(hint)
+        else suggestionsAdapter.notifyDataSetChanged()
     }
 }
