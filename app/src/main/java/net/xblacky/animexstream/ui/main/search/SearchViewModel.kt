@@ -16,11 +16,25 @@ class SearchViewModel : CommonViewModel2() {
 
     private val searchRepository = SearchRepository()
     private var _searchList: MutableLiveData<ArrayList<AnimeMetaModel>> = MutableLiveData()
+    private var _suggestionsList: MutableLiveData<ArrayList<String>> = MutableLiveData()
     private var pageNumber: Int = 1
     private lateinit var keyword: String
     private var _canNextPageLoaded = true
     private var compositeDisposable: CompositeDisposable = CompositeDisposable()
+
     var searchList: LiveData<ArrayList<AnimeMetaModel>> = _searchList
+    var suggestionsList: LiveData<ArrayList<String>> = _suggestionsList
+
+    fun fetchSuggestionsList(keyword: String) {
+        val list = _suggestionsList.value
+        list?.clear()
+        _suggestionsList.value = list
+        compositeDisposable.add(
+                searchRepository.fetchSearchSuggestions(
+                    keyword
+                ).subscribeWith(getSuggestionsObserver())
+        )
+    }
 
     fun fetchSearchList(keyword: String) {
         pageNumber = 1
@@ -49,8 +63,19 @@ class SearchViewModel : CommonViewModel2() {
             )
             updateLoadingState(loading = Loading.LOADING, e = null, isListEmpty = isListEmpty())
         }
+    }
 
+    private fun getSuggestionsObserver(): DisposableObserver<ResponseBody> {
+        return object : DisposableObserver<ResponseBody>() {
+            override fun onComplete() {}
 
+            override fun onNext(response: ResponseBody) {
+                val list = HtmlParser.parseSuggestions(response.string())
+                _suggestionsList.value = list
+            }
+
+            override fun onError(e: Throwable) {}
+        }
     }
 
     private fun getSearchObserver(searchType: Int): DisposableObserver<ResponseBody> {
