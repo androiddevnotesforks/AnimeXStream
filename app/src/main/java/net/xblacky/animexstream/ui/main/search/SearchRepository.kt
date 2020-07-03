@@ -16,4 +16,8 @@ class SearchRepository {
         return searchService.get(keyWord,pageNumber).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
     }
 
+    fun fetchSearchSuggestions(keyWord: String): Observable<ResponseBody>{
+        val searchService = retrofit.create(NetworkInterface.FetchSearchSuggestionData::class.java)
+        return searchService.get(keyWord).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
 }
