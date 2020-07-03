@@ -183,17 +183,16 @@ class HtmlParser {
             )
         }
 
-        fun parseSuggestions(response: String): List<String> {
-            if(response.isNotBlank()){
-                val  document = Jsoup.parse(JSONObject(response)["content"] as? String ?: "")
-                val li = document.select("li")
-                val list = ArrayList<String>()
-                li.forEach {
-                    list.add(it.text())
+        fun parseSuggestions(response: String): ArrayList<String> {
+            val document = Jsoup.parse(JSONObject(response)["content"] as? String ?: "")
+            val li = document.select("li")
+            val list = ArrayList<String>()
+            li?.forEach {
+                it?.text()?.apply {
+                    list.add((this))
                 }
-                return list
             }
-            return emptyList<String>()
+            return list
         }
 
         fun parseM3U8Url(response: String): String? {
