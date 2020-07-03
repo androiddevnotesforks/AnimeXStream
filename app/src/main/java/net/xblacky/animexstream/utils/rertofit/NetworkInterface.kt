@@ -2,7 +2,9 @@ package net.xblacky.animexstream.utils.rertofit
 
 import io.reactivex.Observable
 import net.xblacky.animexstream.utils.constants.C
+import net.xblacky.animexstream.utils.model.SuggestionModel
 import okhttp3.ResponseBody
+import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query
@@ -130,6 +132,6 @@ class NetworkInterface {
         @GET(C.SUGGESTION_URL)
         fun get(
             @Query("keyword") keyword: String
-        ): Observable<ResponseBody>
+        ): Call<SuggestionModel>
     }
 }
