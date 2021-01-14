@@ -70,7 +70,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
     private fun setClickListeners() {
         rootView.header.setOnClickListener(this)
         rootView.search.setOnClickListener(this)
-        rootView.favorite.setOnClickListener(this)
+    //    rootView.favorite.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {

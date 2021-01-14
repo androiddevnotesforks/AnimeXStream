@@ -8,7 +8,6 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-
 android {
 
 //    signingConfigs {

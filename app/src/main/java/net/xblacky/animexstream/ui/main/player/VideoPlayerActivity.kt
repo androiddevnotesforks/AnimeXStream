@@ -14,11 +14,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import io.realm.Realm
+import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_video_player.*
 import kotlinx.android.synthetic.main.fragment_video_player.*
 import net.xblacky.animexstream.MainActivity
 import net.xblacky.animexstream.R
+import net.xblacky.animexstream.utils.model.AnimeMetaModel
 import net.xblacky.animexstream.utils.model.Content
+import net.xblacky.animexstream.utils.model.SettingsModel
+import net.xblacky.animexstream.utils.realm.InitalizeRealm
 import timber.log.Timber
 import java.lang.Exception
 
@@ -27,6 +32,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
     private lateinit var viewModel: VideoPlayerViewModel
     private var episodeNumber: String? = ""
     private var animeName: String? = ""
+
     private lateinit var content: Content
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +45,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
 //        ))
         setObserver()
         goFullScreen()
+
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -274,5 +281,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
 
         viewModel.fetchEpisodeMediaUrl(fetchFromDb = false)
     }
+
+
 
 }

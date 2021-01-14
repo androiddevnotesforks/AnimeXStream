@@ -34,6 +34,7 @@ import com.google.android.exoplayer2.upstream.*
 import com.google.android.exoplayer2.upstream.HttpDataSource.InvalidResponseCodeException
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
+import io.realm.Realm
 import kotlinx.android.synthetic.main.error_screen_video_player.view.*
 import kotlinx.android.synthetic.main.exo_player_custom_controls.*
 import kotlinx.android.synthetic.main.exo_player_custom_controls.view.*
@@ -49,6 +50,8 @@ import net.xblacky.animexstream.utils.constants.C.Companion.RESPONSE_UNKNOWN
 import net.xblacky.animexstream.utils.model.Content
 import net.xblacky.animexstream.utils.model.PaheModel.ResolutionURLs.ResolutionURLs
 import net.xblacky.animexstream.utils.model.PaheModel.SessionURLs.SessionsURLs
+import net.xblacky.animexstream.utils.model.SettingsModel
+import net.xblacky.animexstream.utils.realm.InitalizeRealm
 import okhttp3.*
 import org.apache.commons.lang3.StringUtils
 import org.mozilla.javascript.Scriptable
@@ -74,7 +77,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     private var trackSelector: DefaultTrackSelector? = null
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var mediaSessionConnector: MediaSessionConnector
-
+    private var AnimePaheEnabled: Boolean ? = false
     private var mappedTrackInfo: MappingTrackSelector.MappedTrackInfo? = null
     private lateinit var audioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
@@ -102,6 +105,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         setClickListeners()
         initializeAudioManager()
         initializePlayer()
+        checkAnimePaheEnabled()
         retainInstance = true
         return rootView
     }
@@ -201,8 +205,8 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             previousEpisode.visibility = View.GONE
         }
         this.episodenum = StringUtils.substringAfterLast(content.episodeUrl, "-")
-        var u = 1
-        if(u == 1){
+
+        if(AnimePaheEnabled == true){
             getPaheId(content.animeName)}
         else{
             if(!content.url.isNullOrEmpty()){
@@ -791,6 +795,32 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         return isVideoPlaying
     }
 
+
+    fun checkAnimePaheEnabled(){
+        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
+
+
+        //   val list: ArrayList<SettingsModel> = ArrayList()
+        try {
+
+                realm.executeTransaction { realm1: Realm ->
+                    val results =
+                            realm1.where(SettingsModel::class.java)?.findFirst()
+                    if (results == null ) {
+                        val settings2 = realm.createObject(SettingsModel::class.java)
+                        realm1.insertOrUpdate(settings2)
+                        AnimePaheEnabled = false
+                        // set the fields here
+                    } else {
+                        AnimePaheEnabled = results.paheanimeon
+                    }
+
+                }
+        } catch (ignored: java.lang.Exception) {
+        }
+
+    }
+
 }
 
 interface VideoPlayerListener {
@@ -843,3 +873,4 @@ fun enableTls12OnPreLollipop(client: OkHttpClient.Builder): OkHttpClient.Builder
     }
     return client
 }
+

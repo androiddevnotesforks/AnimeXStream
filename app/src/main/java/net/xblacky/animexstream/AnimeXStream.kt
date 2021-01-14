@@ -3,6 +3,8 @@ package net.xblacky.animexstream
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
+import io.realm.Realm
+import net.xblacky.animexstream.utils.model.SettingsModel
 import net.xblacky.animexstream.utils.realm.InitalizeRealm
 import timber.log.Timber
 
@@ -12,6 +14,8 @@ class AnimeXStream : MultiDexApplication() {
         super.onCreate()
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         InitalizeRealm.initializeRealm(this)
+
+
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
