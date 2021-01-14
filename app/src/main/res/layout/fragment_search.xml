@@ -28,7 +28,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_arrow"
+                app:srcCompat="@drawable/ic_arrow"
                 android:id="@+id/backButton"
                 android:tint="@color/search_back"
                 android:scaleX="1.2"

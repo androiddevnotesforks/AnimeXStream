@@ -236,7 +236,7 @@
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
                 android:id="@+id/back"
-                android:src="@drawable/ic_arrow"
+                app:srcCompat="@drawable/ic_arrow"
                 android:tint="@color/info_back" />
 
             <TextView
@@ -274,7 +274,7 @@
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
                 android:visibility="gone"
-                android:src="@drawable/ic_unfavorite" />
+                app:srcCompat="@drawable/ic_unfavorite" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

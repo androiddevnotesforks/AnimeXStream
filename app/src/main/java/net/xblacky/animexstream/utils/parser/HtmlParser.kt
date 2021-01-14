@@ -1,6 +1,6 @@
 package net.xblacky.animexstream.utils.parser
 
-import com.google.android.gms.common.api.Api
+
 import io.realm.RealmList
 import net.xblacky.animexstream.utils.constants.C
 import net.xblacky.animexstream.utils.model.*
@@ -167,7 +167,7 @@ class HtmlParser {
         fun parseMediaUrl(response: String): EpisodeInfo {
             val mediaUrl: String?
             val document = Jsoup.parse(response)
-            val info = document?.getElementsByClass("anime")?.first()?.select("a")
+            val info = document?.getElementsByClass("vidcdn")?.first()?.select("a")
             mediaUrl = info?.attr("data-video").toString()
 //            mediaUrl = mediaUrl.replace("load", "streaming")
             val nextEpisodeUrl =
@@ -206,7 +206,8 @@ class HtmlParser {
                 while (matcher.find()) {
                     Timber.e(matcher.group((0)))
                     if (matcher.group(0)!!.contains("m3u8") || matcher.group(0)!!
-                            .contains("googlevideo")
+                            .contains("googlevideo") || matcher.group(0)!!
+                            .contains("")
                     ) {
                         m3u8Url = matcher.group(0)
                         break

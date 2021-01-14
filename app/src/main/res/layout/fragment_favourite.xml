@@ -71,7 +71,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:id="@+id/back"
-                android:src="@drawable/ic_arrow"
+                app:srcCompat="@drawable/ic_arrow"
                 android:tint="@color/favourite_back" />
 
             <TextView

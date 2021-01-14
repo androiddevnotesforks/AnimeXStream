@@ -1,11 +1,10 @@
 package net.xblacky.animexstream.ui.main.home
 
+import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import io.realm.*
@@ -30,39 +29,24 @@ class HomeViewModel : ViewModel(){
     var updateModel : LiveData<UpdateModel> = _updateModel
     private val compositeDisposable = CompositeDisposable()
     private val realmListenerList = ArrayList<RealmResults<AnimeMetaModel>>()
-    private lateinit var database: DatabaseReference
+
 
     init {
         fetchHomeList()
-        queryDB()
+
     }
 
     private fun fetchHomeList(){
         fetchRecentSub()
-        fetchRecentDub()
+        //i dont watch sub so only for other users
+        if (!BuildConfig.DEBUG) {
+        fetchRecentDub()}
         fetchPopular()
         fetchNewSeason()
         fetchMovies()
     }
 
-    private fun queryDB(){
-        database = Firebase.database.reference
-        val query: Query = database.child("appdata")
-        query.addListenerForSingleValueEvent(object : ValueEventListener{
-            override fun onCancelled(ignored: DatabaseError) {
-                Timber.e(ignored.message)
-            }
 
-            override fun onDataChange(snapshot: DataSnapshot) {
-                Timber.e(snapshot.toString())
-                _updateModel.value = UpdateModel(
-                    versionCode = snapshot.child("versionCode").value as Long,
-                    whatsNew = snapshot.child("whatsNew").value.toString()
-                )
-            }
-
-        })
-    }
     private fun getHomeListObserver(typeValue: Int): DisposableObserver<ResponseBody> {
         return  object : DisposableObserver<ResponseBody>(){
             override fun onComplete() {

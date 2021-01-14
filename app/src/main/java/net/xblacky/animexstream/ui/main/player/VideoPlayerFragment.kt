@@ -456,7 +456,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
     private fun initializeAudioManager() {
         audioManager = context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         val mAudioAttributes = android.media.AudioAttributes.Builder()
             .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
             .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MOVIE)
@@ -469,7 +469,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                 .setWillPauseWhenDucked(true)
                 .setOnAudioFocusChangeListener(this)
                 .build()
-        }
+        }}
 
     }
 
