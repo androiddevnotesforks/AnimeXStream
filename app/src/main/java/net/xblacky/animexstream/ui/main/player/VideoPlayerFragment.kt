@@ -201,7 +201,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             previousEpisode.visibility = View.GONE
         }
         this.episodenum = StringUtils.substringAfterLast(content.episodeUrl, "-")
-        var u = 2
+        var u = 1
         if(u == 1){
             getPaheId(content.animeName)}
         else{
@@ -512,7 +512,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             override fun onNext(t: SessionsURLs) {
                 var x = t;
                 if(Integer.parseInt(x.total) > 0){
-
+                    var count = 0;
                     for (episodes in x.data){
                         if(episodes.episode.equals(episodenum)){
                             Timber.e("vapor anime pahe session:" + episodes.session)
@@ -526,7 +526,8 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                             )
                             break
                         }
-                        if(episodes.episode.equals(x.total)) playVideo("")
+                        count = count + 1
+                        if(count.toString().equals(x.total)) playVideo("")
                     }
 
                 }else{playVideo("")}
@@ -622,7 +623,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             content.url = source}
 
         if(!content.url.isNullOrEmpty()){
-
+            Timber.e("vapor true link:"+ content.url);
             updateVideoUrl(URLDecoder.decode(content.url, StandardCharsets.UTF_8.name()))
         }else{
             showErrorLayout(
@@ -804,6 +805,7 @@ private fun unpackJs(jsPacked: String): String? {
     val scope: Scriptable = ct.initStandardObjects()
     ct.evaluateString(scope, jsPacked.replace("eval", "var _jsUnPacked = "), null, 1, null)
     val jsUnpacked: Any = scope.get("_jsUnPacked", scope)
+
     return jsUnpacked.toString()
 }
 

@@ -160,7 +160,7 @@ class NetworkInterface {
 
     interface FetchPaheEpisodeResolutionURL{
 
-        @GET("fetch/https://animepahe.com/api?m=embed&p=kwik")
+        @GET("https://animepahe.com/api?m=embed&p=kwik")
         @Headers(
             "user-agent:curl/7.54" )
         fun get(
