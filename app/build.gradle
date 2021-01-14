@@ -134,5 +134,8 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
+    //Apache Commons
+    implementation 'org.apache.commons:commons-lang3:3.11'
+    implementation 'org.mozilla:rhino:1.7.13'
 
 }

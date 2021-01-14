@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
@@ -31,6 +32,8 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder
 import com.google.android.exoplayer2.upstream.*
 import com.google.android.exoplayer2.upstream.HttpDataSource.InvalidResponseCodeException
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.observers.DisposableObserver
 import kotlinx.android.synthetic.main.error_screen_video_player.view.*
 import kotlinx.android.synthetic.main.exo_player_custom_controls.*
 import kotlinx.android.synthetic.main.exo_player_custom_controls.view.*
@@ -38,14 +41,23 @@ import kotlinx.android.synthetic.main.fragment_video_player.*
 import kotlinx.android.synthetic.main.fragment_video_player.view.*
 import kotlinx.android.synthetic.main.fragment_video_player_placeholder.view.*
 import net.xblacky.animexstream.R
+import net.xblacky.animexstream.Tls12SocketFactory
+import net.xblacky.animexstream.ui.main.animeinfo.AnimeInfoRepository
 import net.xblacky.animexstream.utils.constants.C.Companion.ERROR_CODE_DEFAULT
 import net.xblacky.animexstream.utils.constants.C.Companion.NO_INTERNET_CONNECTION
 import net.xblacky.animexstream.utils.constants.C.Companion.RESPONSE_UNKNOWN
 import net.xblacky.animexstream.utils.model.Content
+import net.xblacky.animexstream.utils.model.PaheModel.ResolutionURLs.ResolutionURLs
+import net.xblacky.animexstream.utils.model.PaheModel.SessionURLs.SessionsURLs
+import okhttp3.*
+import org.apache.commons.lang3.StringUtils
+import org.mozilla.javascript.Scriptable
 import timber.log.Timber
 import java.io.IOException
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.TimeUnit
+import javax.net.ssl.SSLContext
 
 class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListener,
     AudioManager.OnAudioFocusChangeListener {
@@ -77,6 +89,8 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     private val showableSpeed = arrayOf("0.25x", "0.50x", "1x", "1.25x", "1.50x", "2x")
     private var checkedItem = 2
     private var selectedSpeed = 2
+    private var episodenum = "1" ;
+    private var pahejs = "" ;
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -144,9 +158,20 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         if(lastPath!!.contains("m3u8")){
             return HlsMediaSource.Factory(
                 HlsDataSourceFactory {
-                    val dataSource: HttpDataSource =
-                        DefaultHttpDataSource("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36")
-                    dataSource.setRequestProperty("Referer", "https://vidstreaming.io/")
+                    val defaultclient = OkHttpClient.Builder()
+                        .retryOnConnectionFailure(true)
+                        .readTimeout(15, TimeUnit.SECONDS)
+                        .connectTimeout(15, TimeUnit.SECONDS)
+                    val dataSource: OkHttpDataSource =
+                        OkHttpDataSource(
+                            enableTls12OnPreLollipop(defaultclient)!!.build(),
+                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36"
+                        )
+                    if (uri.toString().contains("uwu.m3u8")) {
+                        dataSource.setRequestProperty("Referer", "https://kwik.cx/")
+                    } else {
+                        dataSource.setRequestProperty("Referer", "https://vidstreaming.io/")
+                    }
                     dataSource
                 })
                 .setAllowChunklessPreparation(true)
@@ -175,11 +200,31 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         } ?: kotlin.run {
             previousEpisode.visibility = View.GONE
         }
-        if(!content.url.isNullOrEmpty()){
-            updateVideoUrl(URLDecoder.decode(content.url, StandardCharsets.UTF_8.name()))
-        }else{
-            showErrorLayout(show = true, errorCode = RESPONSE_UNKNOWN, errorMsgId = R.string.server_error)
-        }
+        this.episodenum = StringUtils.substringAfterLast(content.episodeUrl, "-")
+        var u = 2
+        if(u == 1){
+            getPaheId(content.animeName)}
+        else{
+            if(!content.url.isNullOrEmpty()){
+                updateVideoUrl(URLDecoder.decode(content.url, StandardCharsets.UTF_8.name()))
+            }else{
+                showErrorLayout(
+                    show = true,
+                    errorCode = RESPONSE_UNKNOWN,
+                    errorMsgId = R.string.server_error
+                )
+            }}
+
+    }
+
+    private fun getPaheId(animename: String) {
+       // val temp = "tonikaku"
+        Timber.e("vapors2 :" + animename)
+        val animeInfoRepository = AnimeInfoRepository()
+        CompositeDisposable().add(
+            animeInfoRepository.fetchPaheID(animename)
+                .subscribeWith(getPaheIdObserver())
+        )
 
     }
 
@@ -434,6 +479,159 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             }
         }
     }
+    private fun getPaheIdObserver(): DisposableObserver<ResponseBody> {
+        return object : DisposableObserver<ResponseBody>() {
+            override fun onNext(t: ResponseBody) {
+                var x = t.string()
+                //  Timber.e("vapor paheid :" + x)
+                if(x.contains("id")){
+                    val id = StringUtils.substringBetween(x, "id\":", ",\"")
+                    Timber.e("vapor anime pahe:" + id)
+                    //     Timber.e("vapor paheid :" + t.string())
+                    val animeInfoRepository = AnimeInfoRepository()
+                    CompositeDisposable().add(
+                        animeInfoRepository.fetchPaheEpisodeSessionList(id)
+                            .subscribeWith(getPaheSessionListObserver())
+                    )}else{playVideo("")}
+
+            }
+
+            override fun onComplete() {
+
+            }
+
+            override fun onError(e: Throwable) {
+
+                Timber.e("vapor 3 :")
+                playVideo("")
+            }
+
+        }}
+    private fun getPaheSessionListObserver(): DisposableObserver<SessionsURLs> {
+        return object : DisposableObserver<SessionsURLs>() {
+            override fun onNext(t: SessionsURLs) {
+                var x = t;
+                if(Integer.parseInt(x.total) > 0){
+
+                    for (episodes in x.data){
+                        if(episodes.episode.equals(episodenum)){
+                            Timber.e("vapor anime pahe session:" + episodes.session)
+                            val animeInfoRepository = AnimeInfoRepository()
+                            CompositeDisposable().add(
+                                animeInfoRepository.fetchPaheEpisodeResolutionURL(
+                                    episodes.anime_id,
+                                    episodes.session
+                                )
+                                    .subscribeWith(getPaheEpisodeResolutionURLObserver())
+                            )
+                            break
+                        }
+                        if(episodes.episode.equals(x.total)) playVideo("")
+                    }
+
+                }else{playVideo("")}
+
+            }
+
+            override fun onComplete() {
+
+            }
+
+            override fun onError(e: Throwable) {
+                Timber.e("vapor 4 :" + e)
+                playVideo("")
+            }
+
+        }}
+    private fun getPaheEpisodeResolutionURLObserver(): DisposableObserver<ResolutionURLs> {
+        return object : DisposableObserver<ResolutionURLs>() {
+            override fun onNext(t: ResolutionURLs) {
+                var x = t;
+                Timber.e("vapor : " + x.data.toString())
+                var defres = "360"
+                if(x.data[0].get360() !=null){defres = "360"}
+                else if(x.data[0].get480() !=null){defres = "480"}
+                else if(x.data[0].get720() !=null){defres = "720"}
+                else {defres = "1080"}
+                Timber.e("vapor : " + defres)
+                if(!defres.equals("1080")){
+                    var y =""
+                    if(defres.equals("360")){
+                        y = x.data[0].get360().kwik;
+                    } else if(defres.equals("480")){
+                        y = x.data[0].get480().kwik;
+                    } else if(defres.equals("720")){
+                        y =  x.data[0].get720().kwik;
+                    }
+                    Timber.e("vapor kwik :" + y)
+                    val animeInfoRepository = AnimeInfoRepository()
+                    CompositeDisposable().add(
+                        animeInfoRepository.fetchPaheEpisodeURL(
+                            StringUtils.substringAfter(
+                                y,
+                                "https://kwik.cx/e/"
+                            )
+                        )
+                            .subscribeWith(getPaheEpisodeURLObserver())
+                    )
+
+                    //   Timber.e("vapor paheid :" + t.string())
+
+                } else {playVideo("")}
+
+            }
+
+            override fun onComplete() {
+
+            }
+
+            override fun onError(e: Throwable) {
+                Timber.e("vapor 5 :" + e)
+                playVideo("")
+            }
+
+        }}
+    private fun getPaheEpisodeURLObserver(): DisposableObserver<ResponseBody> {
+        return object : DisposableObserver<ResponseBody>() {
+            override fun onNext(t: ResponseBody) {
+                var x = t.string()
+                //    Timber.e("vapor paheid2 :" + x)
+                var jsencoded = "eval(function(p,a,c,k,e,d){" + StringUtils.substringBetween(
+                    x,
+                    ";eval(function(p,a,c,k,e,d){",
+                    "</script>"
+                )
+                //  Timber.e("vapor paheid3 :" + unpackJs( jsencoded))
+                playVideo(StringUtils.substringBetween(unpackJs(jsencoded), "source='", "';"))
+
+            }
+
+            override fun onComplete() {
+
+            }
+
+            override fun onError(e: Throwable) {
+                Timber.e("vapor 6 :" + e)
+                playVideo("")
+            }
+
+        }}
+
+    private fun playVideo(source: String) {
+        if(source.length > 0){
+            content.url = source}
+
+        if(!content.url.isNullOrEmpty()){
+
+            updateVideoUrl(URLDecoder.decode(content.url, StandardCharsets.UTF_8.name()))
+        }else{
+            showErrorLayout(
+                show = true,
+                errorCode = RESPONSE_UNKNOWN,
+                errorMsgId = R.string.server_error
+            )
+        }
+    }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         isVideoPlaying = playWhenReady
@@ -598,4 +796,48 @@ interface VideoPlayerListener {
     fun updateWatchedValue(content: Content)
     fun playPreviousEpisode()
     fun playNextEpisode()
+}
+
+private fun unpackJs(jsPacked: String): String? {
+    val ct: org.mozilla.javascript.Context = org.mozilla.javascript.Context.enter()
+    ct.setOptimizationLevel(-1) // https://stackoverflow.com/a/3859485/6482350
+    val scope: Scriptable = ct.initStandardObjects()
+    ct.evaluateString(scope, jsPacked.replace("eval", "var _jsUnPacked = "), null, 1, null)
+    val jsUnpacked: Any = scope.get("_jsUnPacked", scope)
+    return jsUnpacked.toString()
+}
+
+fun enableTls12OnPreLollipop(client: OkHttpClient.Builder): OkHttpClient.Builder? {
+    if (Build.VERSION.SDK_INT >= 16 && Build.VERSION.SDK_INT < 22) {
+        try {
+            val sc = SSLContext.getInstance("TLSv1.2")
+            sc.init(null, null, null)
+            client.sslSocketFactory(Tls12SocketFactory(sc.socketFactory))
+            val cs = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                .tlsVersions(TlsVersion.TLS_1_2)
+                .cipherSuites(
+                    CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+                    CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                    CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
+                    CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+                    CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+                    CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+                    CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+                    CipherSuite.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
+                    CipherSuite.TLS_ECDHE_RSA_WITH_RC4_128_SHA,
+                    CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA,
+                    CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA,
+                    CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA
+                )
+                .build()
+            val specs: MutableList<ConnectionSpec> = ArrayList()
+            specs.add(cs)
+            specs.add(ConnectionSpec.COMPATIBLE_TLS)
+            specs.add(ConnectionSpec.CLEARTEXT)
+            client.connectionSpecs(specs)
+        } catch (exc: Exception) {
+            Timber.e("OkHttpTLSCompat:" +"Error while setting TLS 1.2 /n" + exc.printStackTrace())
+        }
+    }
+    return client
 }

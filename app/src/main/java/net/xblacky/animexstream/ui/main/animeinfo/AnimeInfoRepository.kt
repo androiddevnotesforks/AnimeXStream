@@ -5,6 +5,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import net.xblacky.animexstream.utils.model.FavouriteModel
+import net.xblacky.animexstream.utils.model.PaheModel.ResolutionURLs.ResolutionURLs
+import net.xblacky.animexstream.utils.model.PaheModel.SessionURLs.SessionsURLs
 import net.xblacky.animexstream.utils.realm.InitalizeRealm
 import net.xblacky.animexstream.utils.rertofit.NetworkInterface
 import net.xblacky.animexstream.utils.rertofit.RetrofitHelper
@@ -23,6 +25,28 @@ class AnimeInfoRepository {
     fun fetchEpisodeList(id: String, endEpisode: String, alias: String): Observable<ResponseBody>{
         val animeEpisodeService = retrofit.create(NetworkInterface.FetchEpisodeList::class.java)
         return animeEpisodeService.get(id= id, endEpisode = endEpisode, alias = alias).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun fetchPaheID(animename : String): Observable<ResponseBody> {
+
+        val animeEpisodeService = retrofit.create(NetworkInterface.FetchPaheID::class.java)
+        return animeEpisodeService.get(animename = animename)
+            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
+    fun fetchPaheEpisodeSessionList(id : String): Observable<SessionsURLs> {
+        val animeEpisodeService = retrofit.create(NetworkInterface.FetchPaheEpisodeSessionList::class.java)
+        return animeEpisodeService.get(animeid = id)
+            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
+    fun fetchPaheEpisodeResolutionURL(id : String , session : String ): Observable<ResolutionURLs> {
+        val animeEpisodeService = retrofit.create(NetworkInterface.FetchPaheEpisodeResolutionURL::class.java)
+        return animeEpisodeService.get(animeid2 = id, episodesession = session)
+            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
+    fun fetchPaheEpisodeURL(lastkwikpath : String): Observable<ResponseBody> {
+        val animeEpisodeService = retrofit.create(NetworkInterface.FetchPaheEpisodeURL::class.java)
+        return animeEpisodeService.get(kwiklink = lastkwikpath)
+            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
     }
 
     fun isFavourite(id: String): Boolean {

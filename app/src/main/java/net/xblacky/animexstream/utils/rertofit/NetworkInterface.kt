@@ -2,13 +2,12 @@ package net.xblacky.animexstream.utils.rertofit
 
 import io.reactivex.Observable
 import net.xblacky.animexstream.utils.constants.C
+import net.xblacky.animexstream.utils.model.PaheModel.ResolutionURLs.ResolutionURLs
+import net.xblacky.animexstream.utils.model.PaheModel.SessionURLs.SessionsURLs
 import net.xblacky.animexstream.utils.model.SuggestionModel
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.Query
-import retrofit2.http.Url
+import retrofit2.http.*
 
 class NetworkInterface {
 
@@ -133,5 +132,52 @@ class NetworkInterface {
         fun get(
             @Query("keyword") keyword: String
         ): Call<SuggestionModel>
+    }
+
+    interface FetchPaheID {
+
+        @GET("https://animepahe.com/api?m=search")
+        @Headers(
+            "user-agent:curl/7.54" )
+        fun get(
+
+            @Query("q") animename : String = ""
+
+            ): Observable<ResponseBody>
+
+    }
+    interface FetchPaheEpisodeSessionList{
+
+        @GET("https://animepahe.com/api?m=release&sort=episode_asc&page=1")
+        @Headers("X-Requested-With:XMLHttpRequest",
+            "user-agent:curl/7.54" )
+        fun get(
+            @Query("id") animeid : String = ""
+
+            ): Observable<SessionsURLs>
+
+    }
+
+    interface FetchPaheEpisodeResolutionURL{
+
+        @GET("fetch/https://animepahe.com/api?m=embed&p=kwik")
+        @Headers(
+            "user-agent:curl/7.54" )
+        fun get(
+            @Query("id") animeid2 : String = "",
+            @Query("session") episodesession : String = ""
+        ): Observable<ResolutionURLs>
+
+    }
+    interface FetchPaheEpisodeURL {
+
+        @Headers("referer:https://kwik.cx",
+            "user-agent:curl/7.54" )
+        @GET("https://kwik.cx/e/{link}")
+        fun get(
+            @Path("link") kwiklink : String = ""
+
+            ): Observable<ResponseBody>
+
     }
 }
