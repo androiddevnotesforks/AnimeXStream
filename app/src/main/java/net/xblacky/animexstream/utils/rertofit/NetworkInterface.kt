@@ -96,6 +96,17 @@ class NetworkInterface {
         ): Observable<ResponseBody>
     }
 
+    interface FetchM3u8Urlv2 {
+        @Headers(
+                C.USER_AGENT
+        )
+        @GET
+        fun get(
+
+                @Url url: String,
+                @Header("Referer") ref : String  =""
+        ): Observable<ResponseBody>
+    }
     interface FetchEpisodeList{
         @Headers(
             C.USER_AGENT,

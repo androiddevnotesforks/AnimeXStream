@@ -174,7 +174,8 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                     if (uri.toString().contains("uwu.m3u8")) {
                         dataSource.setRequestProperty("Referer", "https://kwik.cx/")
                     } else {
-                        dataSource.setRequestProperty("Referer", "https://vidstreaming.io/")
+                        dataSource.setRequestProperty("Referer", content?.referer)
+                        Timber.e(content?.referer)
                     }
                     dataSource
                 })

@@ -11,6 +11,7 @@ import net.xblacky.animexstream.utils.model.Content
 import net.xblacky.animexstream.utils.parser.HtmlParser
 import okhttp3.ResponseBody
 import retrofit2.HttpException
+import timber.log.Timber
 
 class VideoPlayerViewModel : CommonViewModel() {
 
@@ -67,11 +68,18 @@ class VideoPlayerViewModel : CommonViewModel() {
                 if (type == C.TYPE_MEDIA_URL) {
                     val episodeInfo = HtmlParser.parseMediaUrl(response = response.string())
                     episodeInfo.vidcdnUrl?.let {
+
                         compositeDisposable.add(
-                            episodeRepository.fetchM3u8Url(episodeInfo.vidcdnUrl!!).subscribeWith(
-                                getEpisodeUrlObserver(C.TYPE_M3U8_URL)
+//                            episodeRepository.fetchM3u8Url(episodeInfo.vidcdnUrl!!.replace("load.php","loadserver.php")).subscribeWith(
+//                                getEpisodeUrlObserver(C.TYPE_M3U8_PREPROCESS_URL)
+
+                                episodeRepository.fetchM3u8Url("https://gogo-stream.com/videos"+ _content.value?.episodeUrl).subscribeWith(
+                                getEpisodeUrlObserver(C.TYPE_M3U8_PREPROCESS_URL)
+
+
                             )
                         )
+
                     }
                     val watchedEpisode =
                         episodeRepository.fetchWatchedDuration(_content.value?.episodeUrl.hashCode())
@@ -79,12 +87,28 @@ class VideoPlayerViewModel : CommonViewModel() {
                     _content.value?.previousEpisodeUrl = episodeInfo.previousEpisodeUrl
                     _content.value?.nextEpisodeUrl = episodeInfo.nextEpisodeUrl
                 } else if (type == C.TYPE_M3U8_URL) {
+               // Timber.v("vapor xcx:"+ response.string())
                     val m3u8Url = HtmlParser.parseM3U8Url(response = response.string())
                     val content = _content.value
                     content?.url = m3u8Url
                     _content.value = content
                     saveContent(content!!)
                     updateLoading(false)
+                }  else if (type == C.TYPE_M3U8_PREPROCESS_URL) {
+                    val m3u8Urlx = HtmlParser.getGoGoHLS(response = response.string())
+                    val content = _content.value
+                    content?.referer = m3u8Urlx!!.replace("amp;","").replace("streaming","loadserver")
+                    _content.value = content
+                    saveContent(content!!)
+                    compositeDisposable.add(
+                            episodeRepository.fetchM3u8Urlv2(m3u8Urlx!!.replace("amp;","").replace("streaming","loadserver"),m3u8Urlx!!.replace("amp;","").replace("////","//")).subscribeWith(
+                                    getEpisodeUrlObserver(C.TYPE_M3U8_URL)
+
+
+                            )
+                    )
+                 //   Timber.e("vapor_x: "+m3u8Urlx)
+
                 }
 
             }

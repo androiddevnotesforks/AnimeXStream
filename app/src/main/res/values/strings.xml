@@ -24,7 +24,7 @@
     <string name="settings" translatable="false">Settings</string>
     <string name="toggle_to_night_mode" translatable="false">Toggle to Dark Mode</string>
     <string name="toggle_to_light_mode" translatable="false">Toggle to Light Mode</string>
-    <string name="animepahe_on" translatable="false">Enable AnimePahe (360P to 1080P)</string>
+    <string name="animepahe_on" translatable="false">Enable AnimePahe </string>
     <string name="animepahe_off" translatable="false">Disable AnimePahe and Use GoGoAnime Only</string>
     <string name="home" translatable="false">Home</string>
 </resources>
