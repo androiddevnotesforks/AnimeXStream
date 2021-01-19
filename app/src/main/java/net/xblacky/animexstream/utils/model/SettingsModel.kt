@@ -7,6 +7,7 @@ import io.realm.annotations.PrimaryKey
 
 public open class SettingsModel  (
   //  @PrimaryKey
-    var paheanimeon: Boolean = false
+    var paheanimeon: Boolean = false,
+    var nightmodeon: Boolean = false
 
 ): RealmObject()

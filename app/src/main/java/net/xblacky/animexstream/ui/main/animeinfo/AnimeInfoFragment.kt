@@ -106,6 +106,7 @@ class AnimeInfoFragment : Fragment() {
         episodeController.spanCount = Utils.calculateNoOfColumns(context!!, 150f)
         rootView.animeInfoRecyclerView.adapter = episodeController.adapter
         val itemOffsetDecoration = ItemOffsetDecoration(context, R.dimen.episode_offset_left)
+        rootView.animeInfoRecyclerView.
         rootView.animeInfoRecyclerView.addItemDecoration(itemOffsetDecoration)
         rootView.animeInfoRecyclerView.apply {
             layoutManager = GridLayoutManager(context,Utils.calculateNoOfColumns(context!!, 150f))

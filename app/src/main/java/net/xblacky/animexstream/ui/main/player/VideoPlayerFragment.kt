@@ -8,10 +8,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.media.session.MediaSessionCompat
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.util.Log
+import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -23,14 +21,13 @@ import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
-import com.google.android.exoplayer2.source.dash.DashMediaSource
-import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource
 import com.google.android.exoplayer2.source.hls.HlsDataSourceFactory
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.*
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder
-import com.google.android.exoplayer2.upstream.*
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.upstream.HttpDataSource.InvalidResponseCodeException
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
@@ -94,11 +91,16 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     private var selectedSpeed = 2
     private var episodenum = "1" ;
     private var pahejs = "" ;
+    private var GESTURE_FLAG = 0;
+
+
+
+
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         rootView = inflater.inflate(R.layout.fragment_video_player, container, false)
@@ -144,13 +146,23 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     }
 
     private fun setClickListeners() {
+        rootView.previousEpisode.setOnClickListener(this)
         rootView.exo_full_Screen.setOnClickListener(this)
         rootView.exo_track_selection_view.setOnClickListener(this)
         rootView.exo_speed_selection_view.setOnClickListener(this)
         rootView.errorButton.setOnClickListener(this)
         rootView.back.setOnClickListener(this)
         rootView.nextEpisode.setOnClickListener(this)
-        rootView.previousEpisode.setOnClickListener(this)
+        rootView.scrolllayout.setOnTouchListener(object: OnSwipeTouchListener(this.activity) {
+            override fun onSwipeLeft() {
+                Log.e("ViewSwipe", "Left")
+            }
+
+            override fun onSwipeRight() {
+                Log.e("ViewSwipe", "Right")
+            }
+        })
+
     }
 
     private fun buildMediaSource(uri: Uri): MediaSource {
@@ -161,24 +173,24 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
         if(lastPath!!.contains("m3u8")){
             return HlsMediaSource.Factory(
-                HlsDataSourceFactory {
-                    val defaultclient = OkHttpClient.Builder()
-                        .retryOnConnectionFailure(true)
-                        .readTimeout(15, TimeUnit.SECONDS)
-                        .connectTimeout(15, TimeUnit.SECONDS)
-                    val dataSource: OkHttpDataSource =
-                        OkHttpDataSource(
-                            enableTls12OnPreLollipop(defaultclient)!!.build(),
-                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36"
-                        )
-                    if (uri.toString().contains("uwu.m3u8")) {
-                        dataSource.setRequestProperty("Referer", "https://kwik.cx/")
-                    } else {
-                        dataSource.setRequestProperty("Referer", content?.referer)
-                        Timber.e(content?.referer)
-                    }
-                    dataSource
-                })
+                    HlsDataSourceFactory {
+                        val defaultclient = OkHttpClient.Builder()
+                                .retryOnConnectionFailure(true)
+                                .readTimeout(15, TimeUnit.SECONDS)
+                                .connectTimeout(15, TimeUnit.SECONDS)
+                        val dataSource: OkHttpDataSource =
+                                OkHttpDataSource(
+                                        enableTls12OnPreLollipop(defaultclient)!!.build(),
+                                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36"
+                                )
+                        if (uri.toString().contains("uwu.m3u8")) {
+                            dataSource.setRequestProperty("Referer", "https://kwik.cx/")
+                        } else {
+                            dataSource.setRequestProperty("Referer", content?.referer)
+                            Timber.e(content?.referer)
+                        }
+                        dataSource
+                    })
                 .setAllowChunklessPreparation(true)
                 .createMediaSource(uri)
         }else{
@@ -214,9 +226,9 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                 updateVideoUrl(URLDecoder.decode(content.url, StandardCharsets.UTF_8.name()))
             }else{
                 showErrorLayout(
-                    show = true,
-                    errorCode = RESPONSE_UNKNOWN,
-                    errorMsgId = R.string.server_error
+                        show = true,
+                        errorCode = RESPONSE_UNKNOWN,
+                        errorMsgId = R.string.server_error
                 )
             }}
 
@@ -227,8 +239,8 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         Timber.e("vapors2 :" + animename)
         val animeInfoRepository = AnimeInfoRepository()
         CompositeDisposable().add(
-            animeInfoRepository.fetchPaheID(animename)
-                .subscribeWith(getPaheIdObserver())
+                animeInfoRepository.fetchPaheID(animename)
+                        .subscribeWith(getPaheIdObserver())
         )
 
     }
@@ -272,9 +284,30 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             R.id.previousEpisode -> {
                 playPreviousEpisode()
             }
+
         }
     }
 
+//    override fun onTouch(v: View, event: MotionEvent): Boolean {
+//        if (event.action === MotionEvent.ACTION_UP) {
+//            GESTURE_FLAG = 0 // After the finger leaves the screen, reset the flag to adjust the volume or progress
+//            gesture_volume_layout.visibility = View.GONE
+//            gesture_bright_layout.visibility = View.GONE
+//            gesture_progress_layout.visibility = View.GONE
+//        }
+//        Log.i("onTouch", v.toString())
+//        Log.i("onTouch", "onTouch")
+////        rootView.root_layout?.setOnTouchListener(object: OnSwipeTouchListener() {
+////            override fun onSwipeLeft() {
+////                Log.e("ViewSwipe", "Left")
+////            }
+////
+////            override fun onSwipeRight() {
+////                Log.e("ViewSwipe", "Right")
+////            }
+////        })
+//        return true;
+//    }
 
     private fun toggleFullView() {
         if (isFullScreen) {
@@ -284,10 +317,10 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             isFullScreen = false
             context?.let {
                 exo_full_Screen.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        it,
-                        R.drawable.exo_controls_fullscreen_enter
-                    )
+                        ContextCompat.getDrawable(
+                                it,
+                                R.drawable.exo_controls_fullscreen_enter
+                        )
                 )
             }
 
@@ -298,10 +331,10 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             isFullScreen = true
             context?.let {
                 exo_full_Screen.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        it,
-                        R.drawable.exo_controls_fullscreen_exit
-                    )
+                        ContextCompat.getDrawable(
+                                it,
+                                R.drawable.exo_controls_fullscreen_exit
+                        )
                 )
             }
         }
@@ -352,29 +385,29 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                 when (errorCode) {
                     ERROR_CODE_DEFAULT -> {
                         rootView.errorImage.setImageDrawable(
-                            ResourcesCompat.getDrawable(
-                                resources,
-                                R.drawable.ic_error,
-                                null
-                            )
+                                ResourcesCompat.getDrawable(
+                                        resources,
+                                        R.drawable.ic_error,
+                                        null
+                                )
                         )
                     }
                     RESPONSE_UNKNOWN -> {
                         rootView.errorImage.setImageDrawable(
-                            ResourcesCompat.getDrawable(
-                                resources,
-                                R.drawable.ic_error,
-                                null
-                            )
+                                ResourcesCompat.getDrawable(
+                                        resources,
+                                        R.drawable.ic_error,
+                                        null
+                                )
                         )
                     }
                     NO_INTERNET_CONNECTION -> {
                         rootView.errorImage.setImageDrawable(
-                            ResourcesCompat.getDrawable(
-                                resources,
-                                R.drawable.ic_internet,
-                                null
-                            )
+                                ResourcesCompat.getDrawable(
+                                        resources,
+                                        R.drawable.ic_internet,
+                                        null
+                                )
                         )
                     }
                 }
@@ -390,10 +423,10 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
         try {
             TrackSelectionDialogBuilder(
-                context,
-                getString(R.string.video_quality),
-                trackSelector,
-                0
+                    context,
+                    getString(R.string.video_quality),
+                    trackSelector,
+                    0
 
             ).build().show()
         } catch (ignored: java.lang.NullPointerException) {
@@ -418,7 +451,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         val builder = AlertDialog.Builder(context!!)
         builder.apply {
             setTitle("Set your playback speed")
-            setSingleChoiceItems(showableSpeed, checkedItem) {_, which ->
+            setSingleChoiceItems(showableSpeed, checkedItem) { _, which ->
                 when (which) {
                     0 -> setSpeed(0)
                     1 -> setSpeed(1)
@@ -428,11 +461,11 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                     5 -> setSpeed(5)
                 }
             }
-            setPositiveButton("OK") {dialog, _ ->
+            setPositiveButton("OK") { dialog, _ ->
                 setPlaybackSpeed(speeds[selectedSpeed])
                 dialog.dismiss()
             }
-            setNegativeButton("Cancel") {dialog, _ ->
+            setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
             }
         }
@@ -441,8 +474,8 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     }
 
     override fun onTracksChanged(
-        trackGroups: TrackGroupArray?,
-        trackSelections: TrackSelectionArray?
+            trackGroups: TrackGroupArray?,
+            trackSelections: TrackSelectionArray?
     ) {
         try {
 
@@ -467,18 +500,18 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                     val responseCode = httpError.responseCode
                         content.url = ""
                     showErrorLayout(
-                        show = true,
-                        errorMsgId = R.string.server_error,
-                        errorCode = RESPONSE_UNKNOWN
+                            show = true,
+                            errorMsgId = R.string.server_error,
+                            errorCode = RESPONSE_UNKNOWN
                     )
 
                     Timber.e("Response Code $responseCode")
                     // message and headers.
                 } else {
                     showErrorLayout(
-                        show = true,
-                        errorMsgId = R.string.no_internet,
-                        errorCode = NO_INTERNET_CONNECTION
+                            show = true,
+                            errorMsgId = R.string.no_internet,
+                            errorCode = NO_INTERNET_CONNECTION
                     )
                 }
             }
@@ -495,8 +528,8 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                     //     Timber.e("vapor paheid :" + t.string())
                     val animeInfoRepository = AnimeInfoRepository()
                     CompositeDisposable().add(
-                        animeInfoRepository.fetchPaheEpisodeSessionList(id)
-                            .subscribeWith(getPaheSessionListObserver())
+                            animeInfoRepository.fetchPaheEpisodeSessionList(id)
+                                    .subscribeWith(getPaheSessionListObserver())
                     )}else{playVideo("")}
 
             }
@@ -523,11 +556,11 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                             Timber.e("vapor anime pahe session:" + episodes.session)
                             val animeInfoRepository = AnimeInfoRepository()
                             CompositeDisposable().add(
-                                animeInfoRepository.fetchPaheEpisodeResolutionURL(
-                                    episodes.anime_id,
-                                    episodes.session
-                                )
-                                    .subscribeWith(getPaheEpisodeResolutionURLObserver())
+                                    animeInfoRepository.fetchPaheEpisodeResolutionURL(
+                                            episodes.anime_id,
+                                            episodes.session
+                                    )
+                                            .subscribeWith(getPaheEpisodeResolutionURLObserver())
                             )
                             break
                         }
@@ -572,13 +605,13 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                     Timber.e("vapor kwik :" + y)
                     val animeInfoRepository = AnimeInfoRepository()
                     CompositeDisposable().add(
-                        animeInfoRepository.fetchPaheEpisodeURL(
-                            StringUtils.substringAfter(
-                                y,
-                                "https://kwik.cx/e/"
+                            animeInfoRepository.fetchPaheEpisodeURL(
+                                    StringUtils.substringAfter(
+                                            y,
+                                            "https://kwik.cx/e/"
+                                    )
                             )
-                        )
-                            .subscribeWith(getPaheEpisodeURLObserver())
+                                    .subscribeWith(getPaheEpisodeURLObserver())
                     )
 
                     //   Timber.e("vapor paheid :" + t.string())
@@ -603,9 +636,9 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                 var x = t.string()
                 //    Timber.e("vapor paheid2 :" + x)
                 var jsencoded = "eval(function(p,a,c,k,e,d){" + StringUtils.substringBetween(
-                    x,
-                    ";eval(function(p,a,c,k,e,d){",
-                    "</script>"
+                        x,
+                        ";eval(function(p,a,c,k,e,d){",
+                        "</script>"
                 )
                 //  Timber.e("vapor paheid3 :" + unpackJs( jsencoded))
                 playVideo(StringUtils.substringBetween(unpackJs(jsencoded), "source='", "';"))
@@ -628,13 +661,13 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             content.url = source}
 
         if(!content.url.isNullOrEmpty()){
-            Timber.e("vapor true link:"+ content.url);
+            Timber.e("vapor true link:" + content.url);
             updateVideoUrl(URLDecoder.decode(content.url, StandardCharsets.UTF_8.name()))
         }else{
             showErrorLayout(
-                show = true,
-                errorCode = RESPONSE_UNKNOWN,
-                errorMsgId = R.string.server_error
+                    show = true,
+                    errorCode = RESPONSE_UNKNOWN,
+                    errorMsgId = R.string.server_error
             )
         }
     }
@@ -692,9 +725,9 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
         } else {
             focusRequest = audioManager.requestAudioFocus(
-                this,
-                AudioManager.STREAM_MUSIC,
-                AudioManager.AUDIOFOCUS_GAIN
+                    this,
+                    AudioManager.STREAM_MUSIC,
+                    AudioManager.AUDIOFOCUS_GAIN
             )
             checkFocusRequest(focusRequest)
         }
@@ -849,18 +882,18 @@ fun enableTls12OnPreLollipop(client: OkHttpClient.Builder): OkHttpClient.Builder
             val cs = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                 .tlsVersions(TlsVersion.TLS_1_2)
                 .cipherSuites(
-                    CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-                    CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-                    CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
-                    CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-                    CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-                    CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-                    CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-                    CipherSuite.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
-                    CipherSuite.TLS_ECDHE_RSA_WITH_RC4_128_SHA,
-                    CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA,
-                    CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA,
-                    CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA
+                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
+                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+                        CipherSuite.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
+                        CipherSuite.TLS_ECDHE_RSA_WITH_RC4_128_SHA,
+                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA,
+                        CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA,
+                        CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA
                 )
                 .build()
             val specs: MutableList<ConnectionSpec> = ArrayList()
@@ -869,9 +902,11 @@ fun enableTls12OnPreLollipop(client: OkHttpClient.Builder): OkHttpClient.Builder
             specs.add(ConnectionSpec.CLEARTEXT)
             client.connectionSpecs(specs)
         } catch (exc: Exception) {
-            Timber.e("OkHttpTLSCompat:" +"Error while setting TLS 1.2 /n" + exc.printStackTrace())
+            Timber.e("OkHttpTLSCompat:" + "Error while setting TLS 1.2 /n" + exc.printStackTrace())
         }
     }
     return client
 }
+
+
 

@@ -42,11 +42,7 @@ class SettingsFragment: Fragment(), View.OnClickListener {
     }
 
     private fun setupToggleText() {
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
-            rootView.toggleMode.text = getString(R.string.toggle_to_night_mode)
-        } else {
-            rootView.toggleMode.text = getString(R.string.toggle_to_light_mode)
-        }
+
 
         val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());
       ///  realm.beginTransaction()
@@ -55,7 +51,11 @@ class SettingsFragment: Fragment(), View.OnClickListener {
         realm.executeTransaction { realm1: Realm ->
             val  settings = realm1.where(SettingsModel::class.java).findFirst()
             if (settings == null ) {
-
+                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+                    rootView.toggleMode.text = getString(R.string.toggle_to_night_mode)
+                } else {
+                    rootView.toggleMode.text = getString(R.string.toggle_to_light_mode)
+                }
                 val settings2 = realm.createObject(SettingsModel::class.java)
                 realm1.insertOrUpdate(settings2)
                 rootView.toggleMode2.text = getString(R.string.animepahe_on)
@@ -69,7 +69,24 @@ class SettingsFragment: Fragment(), View.OnClickListener {
                  //   Toast.makeText(context, "old realm off", Toast.LENGTH_SHORT).show()
                     rootView.toggleMode2.text = getString(R.string.animepahe_on)
                 }
-            }}
+                if (settings?.nightmodeon == true){
+                    //   Toast.makeText(context, "old realm on", Toast.LENGTH_SHORT).show()
+                    rootView.toggleMode.text = getString(R.string.toggle_to_light_mode)
+                }else{
+                    //   Toast.makeText(context, "old realm off", Toast.LENGTH_SHORT).show()
+                    rootView.toggleMode.text = getString(R.string.toggle_to_night_mode)
+                }
+
+
+            }
+
+
+
+
+
+
+
+        }
       ///      realm.commitTransaction()
 
     }
@@ -89,16 +106,39 @@ class SettingsFragment: Fragment(), View.OnClickListener {
     }
 
     private fun setupToggle() {
+        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());
+        ///  realm.beginTransaction()
 
-            if ((activity as MainActivity).resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//                rootView.toggleMode.text = getString(R.string.toggle_to_night_mode)
-                Toast.makeText(context, "Light Mode", Toast.LENGTH_SHORT).show()
+
+        realm.executeTransaction { realm1: Realm ->
+            val  settings = realm1.where(SettingsModel::class.java).findFirst()
+            if (settings == null ) {
+                val settings2 = realm.createObject(SettingsModel::class.java)
+                realm1.insertOrUpdate(settings2)
             } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                if (settings.nightmodeon == true) {
+                    settings.nightmodeon = false
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+//                rootView.toggleMode.text = getString(R.string.toggle_to_night_mode)
+                    Toast.makeText(context, "Light Mode", Toast.LENGTH_SHORT).show()
+                } else {
+                    settings.nightmodeon = true
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 //                rootView.toggleMode.text = getString(R.string.toggle_to_light_mode)
-                Toast.makeText(context, "Night Mode", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Night Mode", Toast.LENGTH_SHORT).show()
+                }
+
+
             }
+
+
+
+
+
+
+
+        }
+
 
     }
     private fun togglePahe() {
