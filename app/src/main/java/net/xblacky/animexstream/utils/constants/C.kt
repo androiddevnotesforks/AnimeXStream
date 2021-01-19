@@ -3,7 +3,7 @@ package net.xblacky.animexstream.utils.constants
 class C {
     companion object{
 
-        const val GIT_DOWNLOAD_URL = "https://github.com/mukul500/AnimeXStream/"
+        const val GIT_DOWNLOAD_URL = "https://github.com/vapormusic/AnimeXStream/"
 
         //Error Codes
         const val RESPONSE_UNKNOWN: Int = 1000
@@ -11,7 +11,7 @@ class C {
         const val NO_INTERNET_CONNECTION = 1001
 
         //Base URLS
-        var BASE_URL = "https://www1.gogoanime.movie"
+        var BASE_URL = "https://gogoanime.so/"
         const val EPISODE_LOAD_URL = "https://ajax.gogocdn.net/ajax/load-list-episode"
         const val SUGGESTION_URL = "https://vidstreaming.io/ajax-search.html"
         const val SEARCH_URL = "/search.html"
@@ -57,8 +57,8 @@ class C {
 
         //Network Requests Header
         const val USER_AGENT = "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36"
-        const val ORIGIN = "origin: https://www1.gogoanime.movie/"
-        const val REFERER = "referer: https://www1.gogoanime.movie/"
+        const val ORIGIN = "origin: https://gogoanime.so/"
+        const val REFERER = "referer: https://gogoanime.so/"
         const val XML_HTTP_REQUEST = "x-requested-with: XMLHttpRequest"
 
         //Realm
