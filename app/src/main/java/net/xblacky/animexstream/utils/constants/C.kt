@@ -16,6 +16,13 @@ class C {
         const val SUGGESTION_URL = "https://vidstreaming.io/ajax-search.html"
         const val SEARCH_URL = "/search.html"
 
+        //MAL integration
+
+        const val MAL_CLIENT_ID = "325b4e4fe4dae5dd15aa21d0a55f3e43"
+        const val MAL_OAUTH2_BASE = "https://myanimelist.net/v1/oauth2/"
+        const val MAL_STATE = "animexstreamauth"
+
+
 
 
         //Model Type

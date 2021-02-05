@@ -26,5 +26,7 @@
     <string name="toggle_to_light_mode" translatable="false">Toggle to Light Mode</string>
     <string name="animepahe_on" translatable="false">Enable AnimePahe </string>
     <string name="animepahe_off" translatable="false">Disable AnimePahe and Use GoGoAnime Only</string>
+    <string name="mal_on" translatable="false">MAL Sync: On </string>
+    <string name="mal_off" translatable="false">MAL Sync: Off</string>
     <string name="home" translatable="false">Home</string>
 </resources>

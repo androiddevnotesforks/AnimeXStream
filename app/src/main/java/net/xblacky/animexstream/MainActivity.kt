@@ -1,7 +1,10 @@
 package net.xblacky.animexstream
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
@@ -22,6 +25,7 @@ import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
 
+    @SuppressLint("BinaryOperationInTimber")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        if (Build.VERSION.SDK_INT < VERSION_CODES.Q){
@@ -32,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         toggleDayNight()
         setContentView(R.layout.main_activity)
         bottomNavigationView.setupWithNavController(container.findNavController())
+
     }
 
     private fun toggleDayNight() {
@@ -85,4 +90,10 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val data: String? = intent?.dataString
+        Timber.e("""mal :${data}""")
+        //TODO: do something with new intent
+    }
 }

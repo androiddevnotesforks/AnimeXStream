@@ -49,6 +49,24 @@ class AnimeInfoRepository {
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
     }
 
+    fun fetchMALAccessToken(authcode : String, codeverifier : String): Observable<ResponseBody> {
+        val animeEpisodeService = retrofit.create(NetworkInterface.MALAccessToken::class.java)
+        return animeEpisodeService.get(authcode = authcode,code_verifier = codeverifier)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun RefreshMALAccessToken(refresh_token : String): Observable<ResponseBody> {
+        val animeEpisodeService = retrofit.create(NetworkInterface.MALRefreshAccessToken::class.java)
+        return animeEpisodeService.get(refresh_token = refresh_token)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun NetworkInterface.MALUpdateTracking(accessToken: String, animeID : String, animeEp : String): Observable<ResponseBody> {
+        val animeEpisodeService = retrofit.create(NetworkInterface.MALUpdateTracking::class.java)
+        return animeEpisodeService.set(access_token = accessToken, anime_id = animeID , episode = animeEp)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
+
     fun isFavourite(id: String): Boolean {
         val result = realm.where(FavouriteModel::class.java).equalTo("ID", id).findFirst()
         result?.let {

@@ -107,5 +107,15 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="net.xblacky.animexstream.ui.main.settings.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="SettingsFragment">
+        <action
+            android:id="@+id/action_settingsFragment_to_LoginFragment"
+            app:destination="@id/LoginFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/LoginFragment"
+        android:name="net.xblacky.animexstream.ui.main.mal.LoginFragment"
+        android:label="LoginFragment" />
 </navigation>

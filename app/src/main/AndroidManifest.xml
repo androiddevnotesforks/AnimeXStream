@@ -34,7 +34,14 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="animexstream" android:host="auth" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.main.player.VideoPlayerActivity"
             android:screenOrientation="sensorLandscape"
@@ -44,7 +51,11 @@
             android:configChanges=
                 "screenSize|smallestScreenSize|screenLayout|orientation"
             tools:ignore="LockedOrientationActivity"
-            tools:targetApi="n" />
+            tools:targetApi="n" >
+
+
+
+            </activity>
 
     </application>
 

@@ -1,7 +1,9 @@
 package net.xblacky.animexstream.ui.main.settings
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.media.audiofx.Virtualizer
+import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -11,17 +13,21 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.axiel7.moelist.utils.PkceGenerator
 import io.realm.Realm
 import io.realm.Realm.getDefaultInstance
 import kotlinx.android.synthetic.main.fragment_settings.view.*
 import net.xblacky.animexstream.MainActivity
 import net.xblacky.animexstream.R
+import net.xblacky.animexstream.utils.constants.C
 import net.xblacky.animexstream.utils.model.SettingsModel
 import net.xblacky.animexstream.utils.realm.InitalizeRealm
 
 class SettingsFragment: Fragment(), View.OnClickListener {
 
     private lateinit var rootView: View
+    private lateinit var codeVerifier: String
+    private lateinit var codeChallenge: String
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -80,12 +86,6 @@ class SettingsFragment: Fragment(), View.OnClickListener {
 
             }
 
-
-
-
-
-
-
         }
       ///      realm.commitTransaction()
 
@@ -95,6 +95,7 @@ class SettingsFragment: Fragment(), View.OnClickListener {
         rootView.back.setOnClickListener(this)
         rootView.toggleMode.setOnClickListener(this)
         rootView.toggleMode2.setOnClickListener(this)
+        rootView.toggleMode3.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -102,6 +103,7 @@ class SettingsFragment: Fragment(), View.OnClickListener {
             R.id.back -> findNavController().popBackStack()
             R.id.toggleMode -> setupToggle()
             R.id.toggleMode2 -> togglePahe()
+            R.id.toggleMode3 -> MALSync()
         }
     }
 
@@ -177,6 +179,16 @@ class SettingsFragment: Fragment(), View.OnClickListener {
 
 
     }
+
+    fun MALSync(){
+        codeVerifier = PkceGenerator.generateVerifier(128)
+        codeChallenge = codeVerifier
+        val loginUrl = Uri.parse(C.MAL_OAUTH2_BASE + "authorize" + "?response_type=code"
+                + "&client_id=" + C.MAL_CLIENT_ID + "&code_challenge=" + codeVerifier + "&state=" + C.MAL_STATE)
+        val intent = Intent(Intent.ACTION_VIEW, loginUrl)
+        startActivity(intent)
+    }
+
     fun addDataInRealm(settings : SettingsModel ) {
         val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
 

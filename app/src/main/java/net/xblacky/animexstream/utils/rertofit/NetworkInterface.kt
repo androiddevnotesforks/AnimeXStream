@@ -191,4 +191,64 @@ class NetworkInterface {
             ): Observable<ResponseBody>
 
     }
+
+    interface MALAccessToken{
+
+        @POST("https://myanimelist.net/v1/oauth2/token")
+
+        fun get(
+//        Parameter client_id: your Client ID. (REQUIRED)
+//        Parameter code: the user's Authorisation Code received during the previous step. (REQUIRED)
+//        Parameter code_verifier: the Code Verifier generated in Step 2. (REQUIRED)
+//        Parameter grant_type: must be set to "authorization_code". (REQUIRED)
+                @Query("client_id") client_id : String = C.MAL_CLIENT_ID,
+                @Query("code") authcode : String = "",
+                @Query("code_verifier") code_verifier : String = "",
+                @Query("grant_type") grant_type : String = "authorization_code"
+
+        ): Observable<ResponseBody>
+
+    }
+
+    interface MALRefreshAccessToken{
+
+        @POST("https://myanimelist.net/v1/oauth2/token")
+
+        fun get(
+
+                @Query("client_id") client_id : String = C.MAL_CLIENT_ID,
+                @Query("refresh_token") refresh_token : String = "",
+                @Query("grant_type") grant_type : String = "refresh_token"
+
+        ): Observable<ResponseBody>
+
+    }
+
+    interface MALAnimeID{
+
+        @GET("https://api.jikan.moe/v3/search/anime")
+
+        fun get(
+
+                @Query("q") query : String = "",
+                @Query("limit") limit : String = "1"
+
+        ): Observable<ResponseBody>
+
+    }
+
+    interface MALUpdateTracking{
+
+        @PUT("https://api.myanimelist.net/v2/anime/{anime_id}/my_list_status")
+
+        fun set(
+                @Header( "Authorization") access_token : String = "",
+                @Path("anime_id") anime_id : String = "",
+                @Query("num_watched_episodes") episode : String = ""
+
+
+        ): Observable<ResponseBody>
+
+    }
+
 }
