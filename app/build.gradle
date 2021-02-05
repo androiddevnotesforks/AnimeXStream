@@ -73,7 +73,7 @@ android {
 }
 
 dependencies {
-    implementation files('C:\\Users\\SongAnh\\Desktop\\AnimeXStream-dev\\app\\libs\\extension-okhttp-2.10.8.aar')
+  //  implementation files('C:\\Users\\SongAnh\\Desktop\\AnimeXStream-dev\\app\\libs\\extension-okhttp-2.10.8.aar')
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -120,6 +120,7 @@ dependencies {
     //Exo Player
     implementation 'com.google.android.exoplayer:exoplayer:2.10.8'
     implementation 'com.google.android.exoplayer:extension-mediasession:2.10.8'
+    implementation 'com.google.android.exoplayer:extension-okhttp:2.10.8'
 
     //Expandable TextView
     implementation 'com.ms-square:expandableTextView:0.1.4'
