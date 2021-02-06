@@ -7,12 +7,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import net.xblacky.animexstream.BuildConfig
 import net.xblacky.animexstream.R
@@ -71,7 +73,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
     private fun setClickListeners() {
         rootView.header.setOnClickListener(this)
         rootView.search.setOnClickListener(this)
-    //    rootView.favorite.setOnClickListener(this)
+        rootView.favorite.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -89,7 +91,13 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
               try{  findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSearchFragment())} catch (e: Exception){}
             }
             R.id.favorite -> {
-                try{   findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToFavouriteFragment())} catch (e: Exception){}
+                val snackbar: Snackbar = Snackbar.make(rootView, "", Snackbar.LENGTH_SHORT)
+                val snackbarLayout = snackbar.view
+                val textView = snackbarLayout.findViewById<View>(com.google.android.material.R.id.snackbar_text) as TextView
+                textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite, 0, 0, 0)
+                snackbar.show()
+            //    try{   findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToFavouriteFragment())} catch (e: Exception){}
+          //      Snackbar.make(rootView, "\uD83D\uDE3B", Snackbar.LENGTH_SHORT).show()
             }
         }
     }

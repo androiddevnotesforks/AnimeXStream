@@ -11,9 +11,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.axiel7.moelist.utils.PkceGenerator
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import io.realm.Realm
+import kotlinx.android.synthetic.main.fragment_settings.view.*
 import kotlinx.android.synthetic.main.main_activity.*
 import net.xblacky.animexstream.ui.main.animeinfo.AnimeInfoRepository
 import net.xblacky.animexstream.utils.constants.C
@@ -38,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         toggleDayNight()
         setContentView(R.layout.main_activity)
         bottomNavigationView.setupWithNavController(container.findNavController())
+        checkMALRefreshValid()
 
     }
 
@@ -110,14 +113,15 @@ class MainActivity : AppCompatActivity() {
                     animeInfoRepository.fetchMALAccessToken(
                             code = code!!, code_verifier = receivedState!!
                     )
-                            .subscribeWith(generateMALAccessToken())
+                            .subscribeWith(generateMALAccessToken(C.MAL_NEW_ACCESS))
             )
         }
     }
 
-    private fun generateMALAccessToken(): DisposableObserver<ResponseBody> {
+    private fun generateMALAccessToken(type : Int): DisposableObserver<ResponseBody> {
         return object : DisposableObserver<ResponseBody>() {
             override fun onNext(t: ResponseBody) {
+                if(type == C.MAL_NEW_ACCESS){
                 val obj = JSONObject(t.string().toString())
                 val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());
                 realm.executeTransaction { realm1: Realm ->
@@ -142,6 +146,32 @@ class MainActivity : AppCompatActivity() {
 
 
                 }
+            } else if (type == C.MAL_REFRESH_ACCESS){
+                    val obj = JSONObject(t.string().toString())
+                    val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());
+                    realm.executeTransaction { realm1: Realm ->
+                        val  settings = realm1.where(SettingsModel::class.java).findFirst()
+                        if (settings == null ) {
+                            val settings2 = realm.createObject(SettingsModel::class.java)
+                            settings2.malsyncon =true
+                            settings2.malaccesstoken = obj.getString("access_token")
+                            settings2.malrefreshtoken = obj.getString("refresh_token")
+                            settings2.malaccesstime = currentTimeMillis().toInt()
+                            Timber.e("mal at: " + settings2.malaccesstoken)
+                            Timber.e("mal rt: " + settings2.malrefreshtoken)
+                            realm1.insertOrUpdate(settings2)
+                        } else {
+                            settings.malsyncon =true
+                            settings.malaccesstoken = obj.getString("access_token")
+                            settings.malrefreshtoken = obj.getString("refresh_token")
+                            settings.malaccesstime = currentTimeMillis().toInt()
+                            Timber.e("mal at: " + settings.malaccesstoken)
+                            Timber.e("mal rt: " + settings.malrefreshtoken)
+                        }
+
+
+                    }
+                }
             }
 
             override fun onComplete() {
@@ -152,5 +182,31 @@ class MainActivity : AppCompatActivity() {
                 Timber.e("vapor 6 :" + e)
             }
 
+        }}
+
+    private fun checkMALRefreshValid(){
+        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());
+
+        try {
+            realm.executeTransaction { realm1: Realm ->
+                val  settings = realm1.where(SettingsModel::class.java).findFirst()
+                if (settings != null) {
+
+                    if (settings.malsyncon == true && currentTimeMillis().toInt() > settings.malaccesstime + 2592000000 ) // last refreshed in 30 days
+                    {
+                       val codeVerifier = PkceGenerator.generateVerifier(128)
+                        val loginUrl = Uri.parse(C.MAL_OAUTH2_BASE + "authorize" + "?response_type=code"
+                                + "&client_id=" + Private.MAL_CLIENT_ID + "&code_challenge=" + codeVerifier + "&state=" + codeVerifier)
+                        Timber.e("""mal :${codeVerifier}""")
+                        val intent = Intent(Intent.ACTION_VIEW, loginUrl)
+                        startActivity(intent)
+                    } else {
+                        val animeInfoRepository = AnimeInfoRepository()
+                        CompositeDisposable().add(
+                                animeInfoRepository.RefreshMALAccessToken(settings.malrefreshtoken).subscribeWith(generateMALAccessToken(C.MAL_REFRESH_ACCESS))
+                        )
+                    }
+                }}
+        } catch (ignored: Exception) {
         }}
 }

@@ -18,6 +18,7 @@ import io.realm.Realm
 import io.realm.Realm.getDefaultInstance
 import kotlinx.android.synthetic.main.fragment_settings.view.*
 import net.xblacky.animexstream.MainActivity
+import net.xblacky.animexstream.Private
 import net.xblacky.animexstream.R
 import net.xblacky.animexstream.utils.constants.C
 import net.xblacky.animexstream.utils.model.SettingsModel
@@ -83,6 +84,20 @@ class SettingsFragment: Fragment(), View.OnClickListener {
                     //   Toast.makeText(context, "old realm off", Toast.LENGTH_SHORT).show()
                     rootView.toggleMode.text = getString(R.string.toggle_to_night_mode)
                 }
+                if (settings?.malsyncon == true){
+                    //   Toast.makeText(context, "old realm on", Toast.LENGTH_SHORT).show()
+                    rootView.toggleMode3.text = getString(R.string.mal_on)
+                }else{
+                    //   Toast.makeText(context, "old realm off", Toast.LENGTH_SHORT).show()
+                    rootView.toggleMode3.text = getString(R.string.mal_off)
+                }
+                if (settings?.playercontrolson == true){
+                    //   Toast.makeText(context, "old realm on", Toast.LENGTH_SHORT).show()
+                    rootView.toggleMode4.text = getString(R.string.advancedcontrols_on)
+                }else{
+                    //   Toast.makeText(context, "old realm off", Toast.LENGTH_SHORT).show()
+                    rootView.toggleMode4.text = getString(R.string.advancedcontrols_off)
+                }
 
 
             }
@@ -97,6 +112,7 @@ class SettingsFragment: Fragment(), View.OnClickListener {
         rootView.toggleMode.setOnClickListener(this)
         rootView.toggleMode2.setOnClickListener(this)
         rootView.toggleMode3.setOnClickListener(this)
+        rootView.toggleMode4.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -105,6 +121,7 @@ class SettingsFragment: Fragment(), View.OnClickListener {
             R.id.toggleMode -> setupToggle()
             R.id.toggleMode2 -> togglePahe()
             R.id.toggleMode3 -> MALSync()
+            R.id.toggleMode4 -> toggleAdvancedControls()
         }
     }
 
@@ -180,15 +197,85 @@ class SettingsFragment: Fragment(), View.OnClickListener {
 
 
     }
+    private fun toggleAdvancedControls() {
 
+        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());
+
+
+
+        try {
+            realm.executeTransaction { realm1: Realm ->
+                val  settings = realm1.where(SettingsModel::class.java).findFirst()
+                if (settings == null) {
+
+                    val settings2 = realm1.createObject(SettingsModel::class.java)
+                    realm1.insertOrUpdate(settings2)
+                    settings2.playercontrolson = true
+
+                    rootView.toggleMode4.text = getString(R.string.advancedcontrols_on)
+                    // set the fields here
+                    //    Toast.makeText(context, "on", Toast.LENGTH_SHORT).show()
+                } else {
+                    if (settings.playercontrolson == true) {
+                        settings.playercontrolson = false
+                        rootView.toggleMode4.text = getString(R.string.advancedcontrols_off)
+                        //      Toast.makeText(context, "off", Toast.LENGTH_SHORT).show()
+                    } else {
+                        settings.playercontrolson = true
+                        rootView.toggleMode4.text = getString(R.string.advancedcontrols_on)
+                        //       Toast.makeText(context, "on", Toast.LENGTH_SHORT).show()
+                    }
+                }}
+        } catch (ignored: Exception) {
+        }
+
+
+
+
+    }
     fun MALSync(){
-        codeVerifier = PkceGenerator.generateVerifier(128)
-        codeChallenge = codeVerifier
-        val loginUrl = Uri.parse(C.MAL_OAUTH2_BASE + "authorize" + "?response_type=code"
-                + "&client_id=" + C.MAL_CLIENT_ID + "&code_challenge=" + codeVerifier + "&state=" + codeVerifier)
-        Timber.e("""mal :${codeVerifier}""")
-        val intent = Intent(Intent.ACTION_VIEW, loginUrl)
-        startActivity(intent)
+        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());
+
+        try {
+            realm.executeTransaction { realm1: Realm ->
+                val  settings = realm1.where(SettingsModel::class.java).findFirst()
+                if (settings == null) {
+
+                    val settings2 = realm1.createObject(SettingsModel::class.java)
+                    settings2.malsyncon = true
+                    realm1.insertOrUpdate(settings2)
+                    rootView.toggleMode3.text = getString(R.string.mal_on)
+                    codeVerifier = PkceGenerator.generateVerifier(128)
+                    codeChallenge = codeVerifier
+                    val loginUrl = Uri.parse(C.MAL_OAUTH2_BASE + "authorize" + "?response_type=code"
+                            + "&client_id=" + Private.MAL_CLIENT_ID + "&code_challenge=" + codeVerifier + "&state=" + codeVerifier)
+                    Timber.e("""mal :${codeVerifier}""")
+                    val intent = Intent(Intent.ACTION_VIEW, loginUrl)
+                    startActivity(intent)
+
+                } else {
+                    if (settings.malsyncon == true) {
+                        rootView.toggleMode3.text = getString(R.string.mal_off)
+                        settings.malsyncon = false
+                        settings.malaccesstoken = ""
+                        settings.malrefreshtoken = ""
+                        settings.malrefreshtoken = ""
+                    } else {
+                        settings.malsyncon = true
+                        rootView.toggleMode3.text = getString(R.string.mal_on)
+                        codeVerifier = PkceGenerator.generateVerifier(128)
+                        codeChallenge = codeVerifier
+                        val loginUrl = Uri.parse(C.MAL_OAUTH2_BASE + "authorize" + "?response_type=code"
+                                + "&client_id=" + Private.MAL_CLIENT_ID + "&code_challenge=" + codeVerifier + "&state=" + codeVerifier)
+                        Timber.e("""mal :${codeVerifier}""")
+                        val intent = Intent(Intent.ACTION_VIEW, loginUrl)
+                        startActivity(intent)
+                    }
+                }}
+        } catch (ignored: Exception) {
+        }
+
+
     }
 
     fun addDataInRealm(settings : SettingsModel ) {

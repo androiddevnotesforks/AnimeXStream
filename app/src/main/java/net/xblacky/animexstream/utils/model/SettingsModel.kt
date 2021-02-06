@@ -9,6 +9,7 @@ public open class SettingsModel  (
   //  @PrimaryKey
     var paheanimeon: Boolean = false,
     var nightmodeon: Boolean = false,
+    var playercontrolson : Boolean = true,
     var malsyncon : Boolean = false,
     var malaccesstoken : String = "",
     var malrefreshtoken : String = "",

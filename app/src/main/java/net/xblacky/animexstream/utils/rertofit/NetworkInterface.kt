@@ -1,6 +1,7 @@
 package net.xblacky.animexstream.utils.rertofit
 
 import io.reactivex.Observable
+import net.xblacky.animexstream.Private
 import net.xblacky.animexstream.utils.constants.C
 import net.xblacky.animexstream.utils.model.PaheModel.ResolutionURLs.ResolutionURLs
 import net.xblacky.animexstream.utils.model.PaheModel.SessionURLs.SessionsURLs
@@ -202,7 +203,7 @@ class NetworkInterface {
 //        Parameter code: the user's Authorisation Code received during the previous step. (REQUIRED)
 //        Parameter code_verifier: the Code Verifier generated in Step 2. (REQUIRED)
 //        Parameter grant_type: must be set to "authorization_code". (REQUIRED)
-                @Field("client_id") client_id : String = C.MAL_CLIENT_ID,
+                @Field("client_id") client_id : String = Private.MAL_CLIENT_ID,
                 @Field("code") code : String = "",
                 @Field("code_verifier") code_verifier : String = "",
                 @Field("grant_type") grant_type : String = "authorization_code"
@@ -217,7 +218,7 @@ class NetworkInterface {
 
         fun get(
 
-                @Field("client_id") client_id : String = C.MAL_CLIENT_ID,
+                @Field("client_id") client_id : String = Private.MAL_CLIENT_ID,
                 @Field("refresh_token") refresh_token : String = "",
                 @Field("grant_type") grant_type : String = "refresh_token"
 

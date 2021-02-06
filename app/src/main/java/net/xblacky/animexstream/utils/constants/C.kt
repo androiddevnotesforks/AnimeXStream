@@ -18,13 +18,12 @@ class C {
 
         //MAL integration
         const val AUTH_DEEP_LINK = "animexstream://auth"
-        const val MAL_CLIENT_ID = "325b4e4fe4dae5dd15aa21d0a55f3e43"
         const val MAL_OAUTH2_BASE = "https://myanimelist.net/v1/oauth2/"
         const val MAL_STATE = "animexstreamauth"
         const val MAL_GET_TRACKING = 900
         const val MAL_SET_TRACKING = 901
-
-
+        const val MAL_NEW_ACCESS = 902
+        const val MAL_REFRESH_ACCESS = 903
 
         //Model Type
         const val TYPE_RECENT_SUB = 1

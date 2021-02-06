@@ -10,7 +10,7 @@ class InitalizeRealm{
         private lateinit var config: RealmConfiguration
         fun initializeRealm(context: Context){
             Realm.init(context)
-            config = RealmConfiguration.Builder().name("animexstream.realm").schemaVersion(0).build()
+            config = RealmConfiguration.Builder().name("animexstream.realm").schemaVersion(1).deleteRealmIfMigrationNeeded().build()
         }
 
         fun getConfig(): RealmConfiguration{

@@ -75,6 +75,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var mediaSessionConnector: MediaSessionConnector
     private var AnimePaheEnabled: Boolean ? = false
+    private var AdvancedControlsEnabled: Boolean ? = true
     private var mappedTrackInfo: MappingTrackSelector.MappedTrackInfo? = null
     private lateinit var audioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
@@ -104,10 +105,11 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         rootView = inflater.inflate(R.layout.fragment_video_player, container, false)
+        checkSettings()
         setClickListeners()
         initializeAudioManager()
         initializePlayer()
-        checkAnimePaheEnabled()
+
         retainInstance = true
         return rootView
     }
@@ -153,6 +155,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         rootView.errorButton.setOnClickListener(this)
         rootView.back.setOnClickListener(this)
         rootView.nextEpisode.setOnClickListener(this)
+        if(AdvancedControlsEnabled == true){
         rootView.scrolllayout.setOnTouchListener(object: OnSwipeTouchListener(this.activity) {
             override fun onSwipeLeft() {
                 Log.e("ViewSwipe", "Left")
@@ -161,7 +164,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             override fun onSwipeRight() {
                 Log.e("ViewSwipe", "Right")
             }
-        })
+        })}
 
     }
 
@@ -830,7 +833,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     }
 
 
-    fun checkAnimePaheEnabled(){
+    fun checkSettings(){
         val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
 
 
@@ -844,9 +847,11 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                         val settings2 = realm.createObject(SettingsModel::class.java)
                         realm1.insertOrUpdate(settings2)
                         AnimePaheEnabled = false
+                        AdvancedControlsEnabled = true
                         // set the fields here
                     } else {
                         AnimePaheEnabled = results.paheanimeon
+                        AdvancedControlsEnabled = results.playercontrolson
                     }
 
                 }
