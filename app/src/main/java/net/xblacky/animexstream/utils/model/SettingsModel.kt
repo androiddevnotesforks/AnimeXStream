@@ -8,6 +8,9 @@ import io.realm.annotations.PrimaryKey
 public open class SettingsModel  (
   //  @PrimaryKey
     var paheanimeon: Boolean = false,
-    var nightmodeon: Boolean = false
-
+    var nightmodeon: Boolean = false,
+    var malsyncon : Boolean = false,
+    var malaccesstoken : String = "",
+    var malrefreshtoken : String = "",
+    var malaccesstime : Int = 0
 ): RealmObject()

@@ -160,7 +160,8 @@ class HtmlParser {
                 genre = genre,
                 plotSummary = formatInfoValues(plotSummary).trim(),
                 alias = alias,
-                endEpisode = endEpisode
+                endEpisode = endEpisode,
+                MALAnimeID = null
             )
 
         }

@@ -91,11 +91,13 @@ class AnimeInfoFragment : Fragment() {
         animeInfoType.text = animeInfoModel.type
         animeInfoTitle.text = animeInfoModel.animeTitle
         toolbarText.text = animeInfoModel.animeTitle
+
         flowLayout.removeAllViews()
         animeInfoModel.genre.forEach {
             flowLayout.addView(GenreTags(context!!).getGenreTag(genreName = it.genreName, genreUrl = it.genreUrl))
         }
        episodeController.setAnime(animeInfoModel.animeTitle)
+       episodeController.setMALID(animeInfoModel.animeTitle)
         animeInfoSummary.text = animeInfoModel.plotSummary
         rootView.favourite.visibility = View.VISIBLE
         rootView.animeInfoRoot.visibility = View.VISIBLE

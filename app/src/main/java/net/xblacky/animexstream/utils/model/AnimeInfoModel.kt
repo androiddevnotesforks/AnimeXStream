@@ -11,5 +11,6 @@ data class AnimeInfoModel(
     var genre: ArrayList<GenreModel>,
     var plotSummary: String,
     var alias: String,
-    var endEpisode: String
+    var endEpisode: String,
+    var MALAnimeID: String? = ""
 )

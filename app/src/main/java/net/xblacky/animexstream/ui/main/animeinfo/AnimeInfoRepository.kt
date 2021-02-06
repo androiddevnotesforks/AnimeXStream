@@ -49,11 +49,12 @@ class AnimeInfoRepository {
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun fetchMALAccessToken(authcode : String, codeverifier : String): Observable<ResponseBody> {
+    fun fetchMALAccessToken(code : String, code_verifier : String): Observable<ResponseBody> {
         val animeEpisodeService = retrofit.create(NetworkInterface.MALAccessToken::class.java)
-        return animeEpisodeService.get(authcode = authcode,code_verifier = codeverifier)
+        return animeEpisodeService.get(code = code,code_verifier = code_verifier)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
     }
+
 
     fun RefreshMALAccessToken(refresh_token : String): Observable<ResponseBody> {
         val animeEpisodeService = retrofit.create(NetworkInterface.MALRefreshAccessToken::class.java)
@@ -61,9 +62,22 @@ class AnimeInfoRepository {
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun NetworkInterface.MALUpdateTracking(accessToken: String, animeID : String, animeEp : String): Observable<ResponseBody> {
+    fun MALAnimeID(query : String): Observable<ResponseBody> {
+        val animeEpisodeService = retrofit.create(NetworkInterface.MALAnimeID::class.java)
+        return animeEpisodeService.get(query = query)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
+
+
+    fun MALUpdateTracking(accessToken: String, animeID : String, animeEp : String): Observable<ResponseBody> {
         val animeEpisodeService = retrofit.create(NetworkInterface.MALUpdateTracking::class.java)
-        return animeEpisodeService.set(access_token = accessToken, anime_id = animeID , episode = animeEp)
+        return animeEpisodeService.set(access_token = "Bearer " + accessToken, anime_id = animeID , episode = animeEp)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun MALCurrentTracking(accessToken: String, animeID: String): Observable<ResponseBody> {
+        val animeEpisodeService = retrofit.create(NetworkInterface.MALCurrentTracking::class.java)
+        return animeEpisodeService.set(access_token = "Bearer " + accessToken, anime_id = animeID )
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
     }
 

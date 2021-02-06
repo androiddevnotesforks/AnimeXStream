@@ -14,16 +14,23 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.observers.DisposableObserver
 import io.realm.Realm
 import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_video_player.*
 import kotlinx.android.synthetic.main.fragment_video_player.*
 import net.xblacky.animexstream.MainActivity
 import net.xblacky.animexstream.R
+import net.xblacky.animexstream.ui.main.animeinfo.AnimeInfoRepository
+import net.xblacky.animexstream.utils.constants.C
 import net.xblacky.animexstream.utils.model.AnimeMetaModel
 import net.xblacky.animexstream.utils.model.Content
 import net.xblacky.animexstream.utils.model.SettingsModel
 import net.xblacky.animexstream.utils.realm.InitalizeRealm
+import net.xblacky.animexstream.utils.rertofit.NetworkInterface
+import okhttp3.ResponseBody
+import org.json.JSONObject
 import timber.log.Timber
 import java.lang.Exception
 
@@ -32,6 +39,9 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
     private lateinit var viewModel: VideoPlayerViewModel
     private var episodeNumber: String? = ""
     private var animeName: String? = ""
+    private var MALAnimeID: String? = ""
+    private var MALAccessToken: String? = ""
+
 
     private lateinit var content: Content
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,6 +90,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
         val url = intent?.extras?.getString("episodeUrl")
         episodeNumber = intent?.extras?.getString("episodeNumber")
         animeName = intent?.extras?.getString("animeName")
+        MALAnimeID = intent?.extras?.getString("MALID")
         viewModel.updateEpisodeContent(
             Content(
                 animeName = animeName ?: "",
@@ -111,25 +122,34 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
     }
 
     override fun onStop() {
+        UpdateMALTracking()
+        Timber.e("video player stopped")
         if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
             &&  hasPipPermission()
         ) {
-            finishAndRemoveTask()
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                finishAndRemoveTask()
+            }
         }
+
         super.onStop()
     }
 
     override fun finish() {
+
         if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
         ) {
-            finishAndRemoveTask()
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                finishAndRemoveTask()
+            }
         }
         super.finish()
     }
 
     fun enterPipModeOrExit() {
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
             && packageManager
                 .hasSystemFeature(
@@ -155,6 +175,75 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
 
         }
     }
+
+    private fun UpdateMALTracking(){
+        val animeInfoRepository = AnimeInfoRepository()
+        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());
+        realm.executeTransaction { realm1: Realm ->
+            val  settings = realm1.where(SettingsModel::class.java).findFirst()
+            Timber.e("oklad: " + settings?.malsyncon!!)
+            if (settings != null && settings.malsyncon == true) {
+
+              try{ MALAccessToken = settings.malaccesstoken!!
+                  Timber.e("oklad")
+                  CompositeDisposable().add(
+                        animeInfoRepository.MALCurrentTracking(settings.malaccesstoken!!,MALAnimeID!!).subscribeWith(MALAnimeTrackingObserver(C.MAL_GET_TRACKING))
+                )}catch (e:Exception){}
+            }
+
+
+        }
+
+    }
+    private fun MALAnimeTrackingObserver(type: Int): DisposableObserver<ResponseBody> {
+        return object : DisposableObserver<ResponseBody>() {
+            override fun onNext(t: ResponseBody) {
+                if(type == C.MAL_GET_TRACKING){
+                    val obj = JSONObject(t.string())
+                    val status = obj.getJSONObject("my_list_status")
+                    val mal_number =  status.getInt("num_episodes_watched")
+                    Timber.e("ep on mal: " + mal_number )
+                           try{
+                               Timber.e("current ep: " + Integer.parseInt(episodeNumber!!.substring(3)))
+                               if (mal_number <  Integer.parseInt(episodeNumber!!.substring(3))){
+
+                                    CompositeDisposable().add(
+                                           AnimeInfoRepository().MALUpdateTracking(MALAccessToken!!,MALAnimeID!!,episodeNumber!!.substring(3)).subscribeWith(MALAnimeTrackingObserver(C.MAL_SET_TRACKING)))
+
+                               }
+                           }catch (e : Exception){}
+                }
+                else if(type == C.MAL_SET_TRACKING){
+
+                }
+            }
+
+            override fun onComplete() {
+
+            }
+
+            override fun onError(e: Throwable) {
+            }
+
+        }}
+    private fun MALAnimeIDObserver(): DisposableObserver<ResponseBody> {
+        return object : DisposableObserver<ResponseBody>() {
+            override fun onNext(t: ResponseBody) {
+                val obj = JSONObject(t.string())
+                val array = obj.getJSONArray("results")
+                val mal_id =  array.getJSONObject(0).getString("mal_id")
+                Timber.e("mal id: " + mal_id)
+
+            }
+
+            override fun onComplete() {
+
+            }
+
+            override fun onError(e: Throwable) {
+            }
+
+        }}
 
     override fun onPictureInPictureModeChanged(
         isInPictureInPictureMode: Boolean,
@@ -255,6 +344,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
             )
             var episodeNumber = Integer.parseInt(episodeString)
             episodeNumber++
+            this.episodeNumber = "EP "+episodeNumber.toString()
             episodeNumber.toString()
 
         } catch (obe: ArrayIndexOutOfBoundsException) {

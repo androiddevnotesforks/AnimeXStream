@@ -220,11 +220,11 @@ class SearchFragment : Fragment(), View.OnClickListener,
     }
 
     override fun animeTitleClick(model: AnimeMetaModel) {
-        findNavController().navigate(
+       try{ findNavController().navigate(
             SearchFragmentDirections.actionSearchFragmentToAnimeInfoFragment(
                 categoryUrl = model.categoryUrl
             )
-        )
+        )} catch (e: Exception){}
     }
 
     override fun findSuggestions(hint: String, newQuery: Boolean) {

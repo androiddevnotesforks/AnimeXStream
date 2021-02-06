@@ -20,6 +20,7 @@ import net.xblacky.animexstream.ui.main.home.epoxy.HomeController
 import net.xblacky.animexstream.utils.constants.C
 import net.xblacky.animexstream.utils.model.AnimeMetaModel
 import timber.log.Timber
+import java.lang.Exception
 
 class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapterCallbacks {
 
@@ -85,31 +86,31 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
 
             }
             R.id.search -> {
-                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSearchFragment())
+              try{  findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSearchFragment())} catch (e: Exception){}
             }
             R.id.favorite -> {
-                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToFavouriteFragment())
+                try{   findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToFavouriteFragment())} catch (e: Exception){}
             }
         }
     }
 
     override fun recentSubDubEpisodeClick(model: AnimeMetaModel) {
-        findNavController().navigate(
+       try{ findNavController().navigate(
             HomeFragmentDirections.actionHomeFragmentToVideoPlayerActivity(
                 episodeUrl = model.episodeUrl,
                 animeName = model.title,
                 episodeNumber = model.episodeNumber
             )
-        )
+        )} catch (e: Exception){}
     }
 
     override fun animeTitleClick(model: AnimeMetaModel) {
         if(!model.categoryUrl.isNullOrBlank()){
-            findNavController().navigate(
+            try{   findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToAnimeInfoFragment(
                     categoryUrl = model.categoryUrl
                 )
-            )
+            )} catch (e: Exception){}
         }
 
     }

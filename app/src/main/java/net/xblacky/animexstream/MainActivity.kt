@@ -1,26 +1,28 @@
 package net.xblacky.animexstream
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
-import android.os.Build.VERSION_CODES
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.observers.DisposableObserver
 import io.realm.Realm
 import kotlinx.android.synthetic.main.main_activity.*
+import net.xblacky.animexstream.ui.main.animeinfo.AnimeInfoRepository
+import net.xblacky.animexstream.utils.constants.C
 import net.xblacky.animexstream.utils.model.SettingsModel
 import net.xblacky.animexstream.utils.realm.InitalizeRealm
+import okhttp3.ResponseBody
+import org.json.JSONObject
 import timber.log.Timber
+import java.lang.System.currentTimeMillis
 
 
 class MainActivity : AppCompatActivity() {
@@ -48,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                 when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
                     Configuration.UI_MODE_NIGHT_YES -> {
                         Timber.e("Night Mode")
-                        settings2.nightmodeon =true
+                        settings2.nightmodeon = true
                     }
 
                     Configuration.UI_MODE_NIGHT_NO -> {
@@ -60,7 +62,7 @@ class MainActivity : AppCompatActivity() {
                             }
                             window.decorView.systemUiVisibility = flags
                         }
-                        settings2.nightmodeon =false
+                        settings2.nightmodeon = false
                         Timber.e("Day Mode")
                     }
                 }
@@ -92,8 +94,63 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        val data: String? = intent?.dataString
-        Timber.e("""mal :${data}""")
+        val uri: Uri? = intent?.data
+        Timber.e("""mal :${uri.toString()}""")
+        if (uri!=null && uri.toString().startsWith(C.AUTH_DEEP_LINK)) { getLoginData(uri) }
         //TODO: do something with new intent
     }
+
+
+    private fun getLoginData(uri: Uri) {
+        if (uri.toString().startsWith(C.AUTH_DEEP_LINK)) {
+            val code = uri.getQueryParameter("code")
+            val receivedState = uri.getQueryParameter("state")
+            val animeInfoRepository = AnimeInfoRepository()
+            CompositeDisposable().add(
+                    animeInfoRepository.fetchMALAccessToken(
+                            code = code!!, code_verifier = receivedState!!
+                    )
+                            .subscribeWith(generateMALAccessToken())
+            )
+        }
+    }
+
+    private fun generateMALAccessToken(): DisposableObserver<ResponseBody> {
+        return object : DisposableObserver<ResponseBody>() {
+            override fun onNext(t: ResponseBody) {
+                val obj = JSONObject(t.string().toString())
+                val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());
+                realm.executeTransaction { realm1: Realm ->
+                    val  settings = realm1.where(SettingsModel::class.java).findFirst()
+                    if (settings == null ) {
+                        val settings2 = realm.createObject(SettingsModel::class.java)
+                        settings2.malsyncon =true
+                        settings2.malaccesstoken = obj.getString("access_token")
+                        settings2.malrefreshtoken = obj.getString("refresh_token")
+                        settings2.malaccesstime = currentTimeMillis().toInt()
+                        Timber.e("mal at: " + settings2.malaccesstoken)
+                        Timber.e("mal rt: " + settings2.malrefreshtoken)
+                        realm1.insertOrUpdate(settings2)
+                    } else {
+                        settings.malsyncon =true
+                        settings.malaccesstoken = obj.getString("access_token")
+                        settings.malrefreshtoken = obj.getString("refresh_token")
+                        settings.malaccesstime = currentTimeMillis().toInt()
+                        Timber.e("mal at: " + settings.malaccesstoken)
+                        Timber.e("mal rt: " + settings.malrefreshtoken)
+                    }
+
+
+                }
+            }
+
+            override fun onComplete() {
+
+            }
+
+            override fun onError(e: Throwable) {
+                Timber.e("vapor 6 :" + e)
+            }
+
+        }}
 }

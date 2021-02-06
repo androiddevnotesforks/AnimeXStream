@@ -22,6 +22,7 @@ import net.xblacky.animexstream.R
 import net.xblacky.animexstream.utils.constants.C
 import net.xblacky.animexstream.utils.model.SettingsModel
 import net.xblacky.animexstream.utils.realm.InitalizeRealm
+import timber.log.Timber
 
 class SettingsFragment: Fragment(), View.OnClickListener {
 
@@ -184,7 +185,8 @@ class SettingsFragment: Fragment(), View.OnClickListener {
         codeVerifier = PkceGenerator.generateVerifier(128)
         codeChallenge = codeVerifier
         val loginUrl = Uri.parse(C.MAL_OAUTH2_BASE + "authorize" + "?response_type=code"
-                + "&client_id=" + C.MAL_CLIENT_ID + "&code_challenge=" + codeVerifier + "&state=" + C.MAL_STATE)
+                + "&client_id=" + C.MAL_CLIENT_ID + "&code_challenge=" + codeVerifier + "&state=" + codeVerifier)
+        Timber.e("""mal :${codeVerifier}""")
         val intent = Intent(Intent.ACTION_VIEW, loginUrl)
         startActivity(intent)
     }
