@@ -199,13 +199,16 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
         return object : DisposableObserver<ResponseBody>() {
             override fun onNext(t: ResponseBody) {
                 if(type == C.MAL_GET_TRACKING){
+                    try{
                     val obj = JSONObject(t.string())
-                    val status = obj.getJSONObject("my_list_status")
-                    val mal_number =  status.getInt("num_episodes_watched")
-                    Timber.e("ep on mal: " + mal_number )
-                           try{
-                               Timber.e("current ep: " + Integer.parseInt(episodeNumber!!.substring(3)))
-                               if (mal_number <  Integer.parseInt(episodeNumber!!.substring(3))){
+                        var status : JSONObject? = null
+                        var mal_number: Int? = null;
+                        try{ status = obj.getJSONObject("my_list_status")
+                  if(status != null)  mal_number =  status.getInt("num_episodes_watched")} catch (e: Exception ){}
+                    //Timber.e("ep on mal: " + mal_number )
+
+                              // Timber.e("current ep: " + Integer.parseInt(episodeNumber!!.substring(3)))
+                               if  (   (status != null && mal_number != null && mal_number!! <  Integer.parseInt(episodeNumber!!.substring(3))) || status == null ){
 
                                     CompositeDisposable().add(
                                            AnimeInfoRepository().MALUpdateTracking(MALAccessToken!!,MALAnimeID!!,episodeNumber!!.substring(3)).subscribeWith(MALAnimeTrackingObserver(C.MAL_SET_TRACKING)))
