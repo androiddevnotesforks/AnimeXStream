@@ -74,6 +74,7 @@ android {
 
 dependencies {
   //  implementation files('C:\\Users\\SongAnh\\Desktop\\AnimeXStream-dev\\app\\libs\\extension-okhttp-2.10.8.aar')
+    implementation 'org.conscrypt:conscrypt-android:2.4.0'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -138,6 +139,6 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.11'
     implementation 'org.mozilla:rhino:1.7.13'
 
-    compile 'com.simplecityapps:recyclerview-fastscroll:2.0.1'
+    implementation 'com.simplecityapps:recyclerview-fastscroll:2.0.1'
 
 }

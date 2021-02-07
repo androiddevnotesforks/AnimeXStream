@@ -43,14 +43,15 @@ Anime X Stream parses website data and filter required info, thus It removes the
 * Watch Progress
 * Add To Favourites
 * Auto Quality for Video Playback
+* Video Player Volume/Brightness Control
 * Ads Free Video Placback
 * Directly skip to next/previous episode from player.
-* Dark Mode Support 
+* Dark Mode Support
+* MyAnimeList watched progress syncing (Will require Login)
 
 ### Coming Features
 
 * Different list of Popular/ Recent / Movies
-* Online syncing of Favourite list & watched progress (Will require Login)
 * … and many more
 
 ### Technologies used
