@@ -50,6 +50,23 @@ class SearchViewModel : CommonViewModel2(), retrofit2.Callback<SuggestionModel> 
         }
     }
 
+    fun fetchSearchGenreList(keyword: String) {
+        pageNumber = 1
+        this.keyword = keyword
+        val list = _searchList.value
+        list?.clear()
+        _searchList.value = list
+        if (!super.isLoading()) {
+            compositeDisposable.add(
+                searchRepository.fetchSearchGenre(
+                    keyword,
+                    pageNumber
+                ).subscribeWith(getSearchObserver(C.TYPE_SEARCH_NEW))
+            )
+            updateLoadingState(loading = Loading.LOADING, e = null, isListEmpty = isListEmpty())
+        }
+    }
+
     fun fetchNextPage() {
         if (_canNextPageLoaded && !super.isLoading()) {
             compositeDisposable.add(

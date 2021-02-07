@@ -90,6 +90,11 @@ class SearchFragment : Fragment(), View.OnClickListener,
         viewModel.fetchSearchList(rootView.searchEditText.text.toString().trim())
     }
 
+    fun searchviaGenre(genre : String){
+        rootView.searchEditText.clearFocus()
+        viewModel.fetchSearchGenreList(genre)
+    }
+
     private fun setEditTextListener() {
         rootView.searchEditTextClear.setOnClickListener {
             rootView.searchEditText.editableText.clear()

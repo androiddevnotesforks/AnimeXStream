@@ -40,6 +40,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="animexstream" android:host="auth" />
+                <data android:scheme="net.myanimelist" android:host="login.input" />
             </intent-filter>
         </activity>
         <activity

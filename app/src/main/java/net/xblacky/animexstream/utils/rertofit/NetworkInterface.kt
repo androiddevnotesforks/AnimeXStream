@@ -146,6 +146,18 @@ class NetworkInterface {
         ): Call<SuggestionModel>
     }
 
+    interface FetchSearchViaGenreData{
+        @Headers(
+                C.USER_AGENT,
+                C.REFERER
+        )
+        @GET("/genre/{keyword}")
+        fun get(
+                @Path("keyword") genre: String,
+                @Query("page") page: Int
+        ): Observable<ResponseBody>
+    }
+
     interface FetchPaheID {
 
         @GET("https://animepahe.com/api?m=search")
@@ -195,6 +207,9 @@ class NetworkInterface {
     }
 
     interface MALAccessToken{
+        @Headers(
+            C.USER_AGENT_MAL
+        )
         @FormUrlEncoded
         @POST("https://myanimelist.net/v1/oauth2/token")
 
@@ -206,13 +221,15 @@ class NetworkInterface {
                 @Field("client_id") client_id : String = Private.MAL_CLIENT_ID,
                 @Field("code") code : String = "",
                 @Field("code_verifier") code_verifier : String = "",
-                @Field("grant_type") grant_type : String = "authorization_code"
+                @Field("grant_type") grant_type : String = "authorization_code",
+                @Field("redirect_uri") redirect_uri : String = C.AUTH_DEEP_LINK
 
         ): Observable<ResponseBody>
 
     }
 
     interface MALRefreshAccessToken{
+
         @FormUrlEncoded
         @POST("https://myanimelist.net/v1/oauth2/token")
 
@@ -220,14 +237,16 @@ class NetworkInterface {
 
                 @Field("client_id") client_id : String = Private.MAL_CLIENT_ID,
                 @Field("refresh_token") refresh_token : String = "",
-                @Field("grant_type") grant_type : String = "refresh_token"
+                @Field("grant_type") grant_type : String = "refresh_token",
+                @Field("redirect_uri") redirect_uri : String = C.AUTH_DEEP_LINK
 
         ): Observable<ResponseBody>
 
     }
 
-    interface MALAnimeID{
 
+
+    interface MALAnimeID{
         @GET("https://api.jikan.moe/v3/search/anime")
 
         fun get(
@@ -241,6 +260,9 @@ class NetworkInterface {
 
 
     interface MALUpdateTracking{
+        @Headers(
+            C.USER_AGENT_MAL
+        )
         @FormUrlEncoded
         @PUT("https://api.myanimelist.net/v2/anime/{anime_id}/my_list_status")
 
@@ -255,7 +277,9 @@ class NetworkInterface {
     }
 
     interface MALCurrentTracking{
-
+        @Headers(
+            C.USER_AGENT_MAL
+        )
         @GET("https://api.myanimelist.net/v2/anime/{anime_id}")
 
         fun set(
@@ -263,6 +287,61 @@ class NetworkInterface {
                 @Path("anime_id") anime_id : String = "",
                 @Query("fields") fields : String = "my_list_status"
 
+
+        ): Observable<ResponseBody>
+
+    }
+
+    interface MALSetFavorite{
+        @Headers(
+            C.USER_AGENT_MAL
+        )
+        @FormUrlEncoded
+        @POST("https://myanimelist.net/v3/user/@me/favorites/anime/{anime_id}")
+
+        fun get(
+            @Header( "x-authorization") access_token : String = "",
+            @Path("anime_id") anime_id : String = "",
+            @Field("x-mal-client-id") client_id : String = Private.MAL_CLIENT_ID,
+            @Field("refresh_token") refresh_token : String = "",
+            @Field("grant_type") grant_type : String = "refresh_token",
+            @Field("redirect_uri") redirect_uri : String = C.AUTH_DEEP_LINK
+
+        ): Observable<ResponseBody>
+
+    }
+    interface MALRemoveFavorite{
+        @Headers(
+            C.USER_AGENT_MAL
+        )
+        @FormUrlEncoded
+        @DELETE("https://myanimelist.net/v3/user/@me/favorites/anime/{anime_id}")
+
+        fun get(
+            @Header( "x-authorization") access_token : String = "",
+            @Path("anime_id") anime_id : String = "",
+            @Field("x-mal-client-id") client_id : String = Private.MAL_CLIENT_ID,
+            @Field("refresh_token") refresh_token : String = "",
+            @Field("grant_type") grant_type : String = "refresh_token",
+            @Field("redirect_uri") redirect_uri : String = C.AUTH_DEEP_LINK
+
+        ): Observable<ResponseBody>
+
+    }
+    interface MALGetFavoriteList{
+        @Headers(
+            C.USER_AGENT_MAL
+        )
+        @FormUrlEncoded
+        @DELETE("https://myanimelist.net/v3/user/@me/favorites/anime")
+
+        fun get(
+            @Header( "x-authorization") access_token : String = "",
+            @Path("anime_id") anime_id : String = "",
+            @Field("x-mal-client-id") client_id : String = Private.MAL_CLIENT_ID,
+            @Field("refresh_token") refresh_token : String = "",
+            @Field("grant_type") grant_type : String = "refresh_token",
+            @Field("redirect_uri") redirect_uri : String = C.AUTH_DEEP_LINK
 
         ): Observable<ResponseBody>
 

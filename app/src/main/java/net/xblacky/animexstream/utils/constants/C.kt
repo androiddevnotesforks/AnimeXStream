@@ -17,7 +17,9 @@ class C {
         const val SEARCH_URL = "/search.html"
 
         //MAL integration
-        const val AUTH_DEEP_LINK = "animexstream://auth"
+      //
+        //  const val AUTH_DEEP_LINK = "animexstream://auth"
+        const val AUTH_DEEP_LINK = "net.myanimelist://login.input"
         const val MAL_OAUTH2_BASE = "https://myanimelist.net/v1/oauth2/"
         const val MAL_STATE = "animexstreamauth"
         const val MAL_GET_TRACKING = 900
@@ -64,6 +66,7 @@ class C {
 
         //Network Requests Header
         const val USER_AGENT = "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36"
+        const val USER_AGENT_MAL = "user-agent: MAL (android, 1.0.8)"
         const val ORIGIN = "origin: https://gogoanime.sh/"
         const val REFERER = "referer: https://gogoanime.sh/"
         const val XML_HTTP_REQUEST = "x-requested-with: XMLHttpRequest"

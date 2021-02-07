@@ -24,4 +24,9 @@ class SearchRepository {
         val searchService = retrofit.create(NetworkInterface.FetchSearchSuggestionData::class.java)
         return searchService.get(keyWord)
     }
+
+    fun fetchSearchGenre(genre: String, pageNumber: Int): Observable<ResponseBody> {
+        val searchService = retrofit.create(NetworkInterface.FetchSearchViaGenreData::class.java)
+        return searchService.get(genre,pageNumber).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
 }
