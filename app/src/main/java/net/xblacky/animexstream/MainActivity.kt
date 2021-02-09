@@ -18,6 +18,7 @@ import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_settings.view.*
 import kotlinx.android.synthetic.main.main_activity.*
 import net.xblacky.animexstream.ui.main.animeinfo.AnimeInfoRepository
+import net.xblacky.animexstream.ui.main.favourites.FavouriteRepository
 import net.xblacky.animexstream.utils.constants.C
 import net.xblacky.animexstream.utils.model.SettingsModel
 import net.xblacky.animexstream.utils.realm.InitalizeRealm
@@ -171,6 +172,8 @@ class MainActivity : AppCompatActivity() {
 
 
                     }
+                } else {
+                    Timber.e("mal4: "+t.string())
                 }
             }
 
@@ -202,9 +205,12 @@ class MainActivity : AppCompatActivity() {
                         startActivity(intent)
                     } else {
                         val animeInfoRepository = AnimeInfoRepository()
+                        val favRepository = FavouriteRepository()
                         CompositeDisposable().add(
                                 animeInfoRepository.RefreshMALAccessToken(settings.malrefreshtoken).subscribeWith(generateMALAccessToken(C.MAL_REFRESH_ACCESS))
+
                         )
+
                     }
                 }}
         } catch (ignored: Exception) {

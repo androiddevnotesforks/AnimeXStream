@@ -11,6 +11,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.observers.DisposableObserver
+import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_favourite.view.*
 import kotlinx.android.synthetic.main.fragment_favourite.view.toolbarText
 import kotlinx.android.synthetic.main.fragment_favourite.view.topView
@@ -19,7 +22,13 @@ import net.xblacky.animexstream.R
 import net.xblacky.animexstream.ui.main.favourites.epoxy.FavouriteController
 import net.xblacky.animexstream.utils.ItemOffsetDecoration
 import net.xblacky.animexstream.utils.Utils
+import net.xblacky.animexstream.utils.constants.C
 import net.xblacky.animexstream.utils.model.FavouriteModel
+import net.xblacky.animexstream.utils.model.SettingsModel
+import net.xblacky.animexstream.utils.realm.InitalizeRealm
+import okhttp3.ResponseBody
+import org.json.JSONObject
+import timber.log.Timber
 
 class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallbacks,View.OnClickListener {
     private lateinit var rootView: View
@@ -36,8 +45,35 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
         setAdapters()
         transitionListener()
         setClickListeners()
+        a()
         return rootView
     }
+
+    fun a(){
+        CompositeDisposable().add(
+
+            FavouriteRepository().fetchMALFavoriteList("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjQwNmE1MDhjNzhmMDM3MmQzZWZiNDIzNTIyNmY1N2IwZmY5NTQ4YmU4NDgxZGU3ODdhMjJlNDQ2MWE3MDVjZWEzMGFkNmQ3OTY5MDI1ODIzIn0.eyJhdWQiOiJkZjM2OGMwYjgyODZiNzM5ZWU3N2YwYjkwNTk2MDcwMCIsImp0aSI6IjQwNmE1MDhjNzhmMDM3MmQzZWZiNDIzNTIyNmY1N2IwZmY5NTQ4YmU4NDgxZGU3ODdhMjJlNDQ2MWE3MDVjZWEzMGFkNmQ3OTY5MDI1ODIzIiwiaWF0IjoxNjEyNzA3NTk0LCJuYmYiOjE2MTI3MDc1OTQsImV4cCI6MTYxNTEyNjc5NCwic3ViIjoiNTMyNjcwOSIsInNjb3BlcyI6W119.pve5D2w_PCOBP2pwM23JE3HqwQBNWxNnFINt2u90Ox1l70P6-KHScQQj0KXez8FyPo4-scenAj56uHEbf0fhSl7jxSpIaCDdBZd6ut9sDy4xFJeqZtFUd9Z54b4fb7lbsHnoaBzoeUnp36tV2WeIhUB5uQyCkrEl4Y_DEN3FCMSFcrSBHfI-FKBPQHxWkJoE6-qKvt5UM3mfIJ7nZrFRIRKDB04fnnEGPhyqFOA2kB_8MXv68vc9ctL2fyCljQrnyaVOlxUtmwZBM7P_54971WWgBLnMYRfD4Px6plSpShaZeKMkhwp5ctV-rYLzVZ0c5NVeLIUQ0VQ0QIHvxKXgAA").subscribeWith(helloobserver())
+        )
+    }
+
+    private fun helloobserver(): DisposableObserver<ResponseBody> {
+        return object : DisposableObserver<ResponseBody>() {
+            override fun onNext(t: ResponseBody) {
+                Timber.e("mal 4 :" + t.string())
+            }
+
+            override fun onComplete() {
+
+            }
+
+            override fun onError(e: Throwable) {
+                Timber.e("vapor 6 :" + e)
+            }
+
+        }}
+
+
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)

@@ -297,14 +297,12 @@ class NetworkInterface {
             C.USER_AGENT_MAL
         )
         @FormUrlEncoded
-        @POST("https://myanimelist.net/v3/user/@me/favorites/anime/{anime_id}")
+        @POST("https://myanimelist.net/v3/users/@me/favorites/anime/{anime_id}")
 
         fun get(
             @Header( "x-authorization") access_token : String = "",
             @Path("anime_id") anime_id : String = "",
             @Field("x-mal-client-id") client_id : String = Private.MAL_CLIENT_ID,
-            @Field("refresh_token") refresh_token : String = "",
-            @Field("grant_type") grant_type : String = "refresh_token",
             @Field("redirect_uri") redirect_uri : String = C.AUTH_DEEP_LINK
 
         ): Observable<ResponseBody>
@@ -315,33 +313,28 @@ class NetworkInterface {
             C.USER_AGENT_MAL
         )
         @FormUrlEncoded
-        @DELETE("https://myanimelist.net/v3/user/@me/favorites/anime/{anime_id}")
+        @DELETE("https://myanimelist.net/v3/users/@me/favorites/anime/{anime_id}")
 
         fun get(
             @Header( "x-authorization") access_token : String = "",
             @Path("anime_id") anime_id : String = "",
             @Field("x-mal-client-id") client_id : String = Private.MAL_CLIENT_ID,
-            @Field("refresh_token") refresh_token : String = "",
-            @Field("grant_type") grant_type : String = "refresh_token",
             @Field("redirect_uri") redirect_uri : String = C.AUTH_DEEP_LINK
 
         ): Observable<ResponseBody>
 
     }
     interface MALGetFavoriteList{
-        @Headers(
-            C.USER_AGENT_MAL
-        )
-        @FormUrlEncoded
-        @DELETE("https://myanimelist.net/v3/user/@me/favorites/anime")
+
+
+        @GET("https://api.myanimelist.net/v3/users/@me/favorites/anime")
 
         fun get(
-            @Header( "x-authorization") access_token : String = "",
-            @Path("anime_id") anime_id : String = "",
-            @Field("x-mal-client-id") client_id : String = Private.MAL_CLIENT_ID,
-            @Field("refresh_token") refresh_token : String = "",
-            @Field("grant_type") grant_type : String = "refresh_token",
-            @Field("redirect_uri") redirect_uri : String = C.AUTH_DEEP_LINK
+            @Header("x-mal-client-id") client_id : String = Private.MAL_CLIENT_ID,
+            @Header("Authorization") access_token : String = "",
+            @Header("Accept-Encoding") accept : String = "gzip",
+            @Header("User-Agent") ua : String = "MAL (android, 1.0.8)",
+            @Header("Content-Length") length: String  = "0"
 
         ): Observable<ResponseBody>
 

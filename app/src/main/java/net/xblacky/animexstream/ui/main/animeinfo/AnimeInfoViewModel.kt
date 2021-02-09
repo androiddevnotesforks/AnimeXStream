@@ -127,6 +127,7 @@ class AnimeInfoViewModel(categoryUrl: String) : CommonViewModel() {
                         imageUrl = model?.imageUrl
                 )
         )
+        Timber.e("mal fav:"+model?.id +" " + categoryUrl + model?.animeTitle)
         _isFavourite.value = true
     }
 
