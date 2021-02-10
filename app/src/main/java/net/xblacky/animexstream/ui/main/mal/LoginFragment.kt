@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.mal
+package net.vapormusic.animexstream.ui.main.mal
 
 
 import android.os.Bundle
@@ -10,7 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.axiel7.moelist.utils.PkceGenerator
 import kotlinx.android.synthetic.main.fragment_settings.view.*
 import kotlinx.android.synthetic.main.web_view.view.*
-import net.xblacky.animexstream.R
+import net.vapormusic.animexstream.R
 
 class LoginFragment : Fragment(), View.OnClickListener {
 

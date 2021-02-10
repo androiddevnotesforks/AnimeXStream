@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.animeinfo
+package net.vapormusic.animexstream.ui.main.animeinfo
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,12 +17,12 @@ import kotlinx.android.synthetic.main.fragment_animeinfo.*
 import kotlinx.android.synthetic.main.fragment_animeinfo.view.*
 import kotlinx.android.synthetic.main.fragment_animeinfo.view.animeInfoRoot
 import kotlinx.android.synthetic.main.loading.view.*
-import net.xblacky.animexstream.R
-import net.xblacky.animexstream.ui.main.animeinfo.epoxy.AnimeInfoController
-import net.xblacky.animexstream.utils.ItemOffsetDecoration
-import net.xblacky.animexstream.utils.Tags.GenreTags
-import net.xblacky.animexstream.utils.Utils
-import net.xblacky.animexstream.utils.model.AnimeInfoModel
+import net.vapormusic.animexstream.R
+import net.vapormusic.animexstream.ui.main.animeinfo.epoxy.AnimeInfoController
+import net.vapormusic.animexstream.utils.ItemOffsetDecoration
+import net.vapormusic.animexstream.utils.Tags.GenreTags
+import net.vapormusic.animexstream.utils.Utils
+import net.vapormusic.animexstream.utils.model.AnimeInfoModel
 
 class AnimeInfoFragment : Fragment() {
 

@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.player
+package net.vapormusic.animexstream.ui.main.player
 
 import android.app.AppOpsManager
 import android.app.PictureInPictureParams
@@ -20,15 +20,15 @@ import io.realm.Realm
 import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_video_player.*
 import kotlinx.android.synthetic.main.fragment_video_player.*
-import net.xblacky.animexstream.MainActivity
-import net.xblacky.animexstream.R
-import net.xblacky.animexstream.ui.main.animeinfo.AnimeInfoRepository
-import net.xblacky.animexstream.utils.constants.C
-import net.xblacky.animexstream.utils.model.AnimeMetaModel
-import net.xblacky.animexstream.utils.model.Content
-import net.xblacky.animexstream.utils.model.SettingsModel
-import net.xblacky.animexstream.utils.realm.InitalizeRealm
-import net.xblacky.animexstream.utils.rertofit.NetworkInterface
+import net.vapormusic.animexstream.MainActivity
+import net.vapormusic.animexstream.R
+import net.vapormusic.animexstream.ui.main.animeinfo.AnimeInfoRepository
+import net.vapormusic.animexstream.utils.constants.C
+import net.vapormusic.animexstream.utils.model.AnimeMetaModel
+import net.vapormusic.animexstream.utils.model.Content
+import net.vapormusic.animexstream.utils.model.SettingsModel
+import net.vapormusic.animexstream.utils.realm.InitalizeRealm
+import net.vapormusic.animexstream.utils.rertofit.NetworkInterface
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import timber.log.Timber

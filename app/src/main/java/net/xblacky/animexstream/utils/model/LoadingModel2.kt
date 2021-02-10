@@ -1,8 +1,8 @@
-package net.xblacky.animexstream.utils.model
+package net.vapormusic.animexstream.utils.model
 
-import net.xblacky.animexstream.R
-import net.xblacky.animexstream.utils.CommonViewModel2
-import net.xblacky.animexstream.utils.constants.C
+import net.vapormusic.animexstream.R
+import net.vapormusic.animexstream.utils.CommonViewModel2
+import net.vapormusic.animexstream.utils.constants.C
 
 data class LoadingModel2(
     val loading: CommonViewModel2.Loading,

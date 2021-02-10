@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.favourites
+package net.vapormusic.animexstream.ui.main.favourites
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
-import net.xblacky.animexstream.utils.model.FavouriteModel
-import net.xblacky.animexstream.utils.realm.InitalizeRealm
+import net.vapormusic.animexstream.utils.model.FavouriteModel
+import net.vapormusic.animexstream.utils.realm.InitalizeRealm
 
 class FavouriteViewModel : ViewModel() {
 

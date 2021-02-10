@@ -1,15 +1,15 @@
-package net.xblacky.animexstream.ui.main.player
+package net.vapormusic.animexstream.ui.main.player
 
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
-import net.xblacky.animexstream.utils.constants.C
-import net.xblacky.animexstream.utils.rertofit.NetworkInterface
-import net.xblacky.animexstream.utils.rertofit.RetrofitHelper
-import net.xblacky.animexstream.utils.model.Content
-import net.xblacky.animexstream.utils.model.WatchedEpisode
-import net.xblacky.animexstream.utils.realm.InitalizeRealm
+import net.vapormusic.animexstream.utils.constants.C
+import net.vapormusic.animexstream.utils.rertofit.NetworkInterface
+import net.vapormusic.animexstream.utils.rertofit.RetrofitHelper
+import net.vapormusic.animexstream.utils.model.Content
+import net.vapormusic.animexstream.utils.model.WatchedEpisode
+import net.vapormusic.animexstream.utils.realm.InitalizeRealm
 import okhttp3.ResponseBody
 import retrofit2.Retrofit
 import timber.log.Timber

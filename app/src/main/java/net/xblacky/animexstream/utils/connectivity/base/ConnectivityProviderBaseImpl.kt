@@ -1,9 +1,9 @@
-package net.xblacky.animexstream.utils.connectivity.base
+package net.vapormusic.animexstream.utils.connectivity.base
 
 import android.os.Handler
 import android.os.Looper
-import net.xblacky.animexstream.utils.connectivity.base.ConnectivityProvider.ConnectivityStateListener
-import net.xblacky.animexstream.utils.connectivity.base.ConnectivityProvider.NetworkState
+import net.vapormusic.animexstream.utils.connectivity.base.ConnectivityProvider.ConnectivityStateListener
+import net.vapormusic.animexstream.utils.connectivity.base.ConnectivityProvider.NetworkState
 
 abstract class ConnectivityProviderBaseImpl : ConnectivityProvider {
     private val handler = Handler(Looper.getMainLooper())

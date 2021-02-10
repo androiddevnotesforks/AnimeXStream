@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.favourites.epoxy
+package net.vapormusic.animexstream.ui.main.favourites.epoxy
 
 import android.view.View
 import android.widget.TextView
@@ -11,14 +11,14 @@ import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import kotlinx.android.synthetic.main.recycler_anime_common.view.*
-import net.xblacky.animexstream.R
-import net.xblacky.animexstream.utils.model.AnimeMetaModel
+import net.vapormusic.animexstream.R
+import net.vapormusic.animexstream.utils.model.AnimeMetaModel
 
 @EpoxyModelClass(layout = R.layout.recycler_anime_common)
 abstract class FavouriteModel : EpoxyModelWithHolder<FavouriteModel.MovieHolder>(){
 
     @EpoxyAttribute
-    lateinit var favouriteModel: net.xblacky.animexstream.utils.model.FavouriteModel
+    lateinit var favouriteModel: net.vapormusic.animexstream.utils.model.FavouriteModel
     @EpoxyAttribute
     var clickListener: View.OnClickListener? = null
 

@@ -1,8 +1,8 @@
-package net.xblacky.animexstream.utils
+package net.vapormusic.animexstream.utils
 
 import android.content.Context
 import android.util.DisplayMetrics
-import net.xblacky.animexstream.utils.constants.C
+import net.vapormusic.animexstream.utils.constants.C
 
 
 class Utils {

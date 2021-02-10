@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.home
+package net.vapormusic.animexstream.ui.main.home
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -14,13 +14,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.javiersantos.appupdater.AppUpdater
+import com.github.javiersantos.appupdater.enums.Display
+import com.github.javiersantos.appupdater.enums.UpdateFrom
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.view.*
-import net.xblacky.animexstream.BuildConfig
-import net.xblacky.animexstream.R
-import net.xblacky.animexstream.ui.main.home.epoxy.HomeController
-import net.xblacky.animexstream.utils.constants.C
-import net.xblacky.animexstream.utils.model.AnimeMetaModel
+import net.vapormusic.animexstream.BuildConfig
+import net.vapormusic.animexstream.R
+import net.vapormusic.animexstream.ui.main.home.epoxy.HomeController
+import net.vapormusic.animexstream.utils.constants.C
+import net.vapormusic.animexstream.utils.model.AnimeMetaModel
 import timber.log.Timber
 import java.lang.Exception
 
@@ -39,7 +42,19 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
         rootView = inflater.inflate(R.layout.fragment_home, container, false)
         setAdapter()
         setClickListeners()
+        checkUpdate()
         return rootView
+    }
+
+    fun checkUpdate(){
+         AppUpdater(activity)
+            //.setUpdateFrom(UpdateFrom.GITHUB)
+            //.setGitHubUserAndRepo("javiersantos", "AppUpdater")
+            .setUpdateFrom(UpdateFrom.GITHUB)
+            .setGitHubUserAndRepo("vapormusic","AnimeXStream")
+            .setDisplay(Display.SNACKBAR)
+            .showAppUpdated(false)
+            .start();
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

@@ -1,9 +1,9 @@
-package net.xblacky.animexstream.ui.main.search.epoxy
+package net.vapormusic.animexstream.ui.main.search.epoxy
 
 import com.airbnb.epoxy.Typed2EpoxyController
-import net.xblacky.animexstream.utils.epoxy.AnimeCommonModel_
-import net.xblacky.animexstream.utils.epoxy.LoadingModel_
-import net.xblacky.animexstream.utils.model.AnimeMetaModel
+import net.vapormusic.animexstream.utils.epoxy.AnimeCommonModel_
+import net.vapormusic.animexstream.utils.epoxy.LoadingModel_
+import net.vapormusic.animexstream.utils.model.AnimeMetaModel
 
 class SearchController(var adapterCallbacks: EpoxySearchAdapterCallbacks) : Typed2EpoxyController<ArrayList<AnimeMetaModel>, Boolean>() {
 

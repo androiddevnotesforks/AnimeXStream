@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.utils.model
+package net.vapormusic.animexstream.utils.model
 
 import io.realm.RealmObject
 import io.realm.annotations.Ignore

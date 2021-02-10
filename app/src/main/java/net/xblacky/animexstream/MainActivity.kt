@@ -1,4 +1,4 @@
-package net.xblacky.animexstream
+package net.vapormusic.animexstream
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -17,12 +17,12 @@ import io.reactivex.observers.DisposableObserver
 import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_settings.view.*
 import kotlinx.android.synthetic.main.main_activity.*
-import net.xblacky.animexstream.ui.main.animeinfo.AnimeInfoRepository
-import net.xblacky.animexstream.ui.main.favourites.FavouriteRepository
-import net.xblacky.animexstream.utils.constants.C
-import net.xblacky.animexstream.utils.model.FavouriteModel
-import net.xblacky.animexstream.utils.model.SettingsModel
-import net.xblacky.animexstream.utils.realm.InitalizeRealm
+import net.vapormusic.animexstream.ui.main.animeinfo.AnimeInfoRepository
+import net.vapormusic.animexstream.ui.main.favourites.FavouriteRepository
+import net.vapormusic.animexstream.utils.constants.C
+import net.vapormusic.animexstream.utils.model.FavouriteModel
+import net.vapormusic.animexstream.utils.model.SettingsModel
+import net.vapormusic.animexstream.utils.realm.InitalizeRealm
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import timber.log.Timber

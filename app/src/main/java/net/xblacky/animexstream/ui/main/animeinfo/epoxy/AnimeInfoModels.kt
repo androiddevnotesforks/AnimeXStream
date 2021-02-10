@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.animeinfo.epoxy
+package net.vapormusic.animexstream.ui.main.animeinfo.epoxy
 
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -16,7 +16,7 @@ import com.airbnb.epoxy.EpoxyHolder
 import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
 import kotlinx.android.synthetic.main.recycler_episode_item.view.*
-import net.xblacky.animexstream.R
+import net.vapormusic.animexstream.R
 
 
 
@@ -24,7 +24,7 @@ import net.xblacky.animexstream.R
 abstract class EpisodeModel : EpoxyModelWithHolder<EpisodeModel.HomeHeaderHolder>(){
 
     @EpoxyAttribute
-    lateinit var episodeModel: net.xblacky.animexstream.utils.model.EpisodeModel
+    lateinit var episodeModel: net.vapormusic.animexstream.utils.model.EpisodeModel
     @EpoxyAttribute
     lateinit var clickListener: View.OnClickListener
     @EpoxyAttribute

@@ -1,14 +1,14 @@
-package net.xblacky.animexstream.ui.main.search
+package net.vapormusic.animexstream.ui.main.search
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
-import net.xblacky.animexstream.utils.CommonViewModel2
-import net.xblacky.animexstream.utils.constants.C
-import net.xblacky.animexstream.utils.model.AnimeMetaModel
-import net.xblacky.animexstream.utils.model.SuggestionModel
-import net.xblacky.animexstream.utils.parser.HtmlParser
+import net.vapormusic.animexstream.utils.CommonViewModel2
+import net.vapormusic.animexstream.utils.constants.C
+import net.vapormusic.animexstream.utils.model.AnimeMetaModel
+import net.vapormusic.animexstream.utils.model.SuggestionModel
+import net.vapormusic.animexstream.utils.parser.HtmlParser
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response

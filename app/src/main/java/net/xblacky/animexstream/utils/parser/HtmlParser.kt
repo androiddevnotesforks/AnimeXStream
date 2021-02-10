@@ -1,10 +1,10 @@
-package net.xblacky.animexstream.utils.parser
+package net.vapormusic.animexstream.utils.parser
 
 
 import io.realm.RealmList
-import net.xblacky.animexstream.utils.constants.C
-import net.xblacky.animexstream.utils.model.*
-import net.xblacky.animexstream.utils.rertofit.RetrofitHelper.getRetrofitInstance
+import net.vapormusic.animexstream.utils.constants.C
+import net.vapormusic.animexstream.utils.model.*
+import net.vapormusic.animexstream.utils.rertofit.RetrofitHelper.getRetrofitInstance
 import org.apache.commons.lang3.StringUtils
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements

@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.player;
+package net.vapormusic.animexstream.ui.main.player;
 
 import android.content.Context
 import android.media.AudioManager

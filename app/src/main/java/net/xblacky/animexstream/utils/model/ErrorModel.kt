@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.utils.model
+package net.vapormusic.animexstream.utils.model
 
 data class ErrorModel(
     var show:Boolean = false,

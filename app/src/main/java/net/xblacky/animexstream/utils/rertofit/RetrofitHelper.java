@@ -1,12 +1,12 @@
-package net.xblacky.animexstream.utils.rertofit;
+package net.vapormusic.animexstream.utils.rertofit;
 
 
 import android.os.Build;
 import android.util.Log;
 
-import net.xblacky.animexstream.BuildConfig;
-import net.xblacky.animexstream.Tls12SocketFactory;
-import net.xblacky.animexstream.utils.constants.C;
+import net.vapormusic.animexstream.BuildConfig;
+import net.vapormusic.animexstream.Tls12SocketFactory;
+import net.vapormusic.animexstream.utils.constants.C;
 
 
 import java.util.ArrayList;

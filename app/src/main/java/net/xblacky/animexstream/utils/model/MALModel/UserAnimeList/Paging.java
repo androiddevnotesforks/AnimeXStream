@@ -1,5 +1,5 @@
 
-package net.xblacky.animexstream.utils.model.MALModel.UserAnimeList;
+package net.vapormusic.animexstream.utils.model.MALModel.UserAnimeList;
 
 
 public class Paging {

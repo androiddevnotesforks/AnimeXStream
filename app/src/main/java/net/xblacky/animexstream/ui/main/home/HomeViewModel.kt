@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.home
+package net.vapormusic.animexstream.ui.main.home
 
 import android.os.Build
 import androidx.lifecycle.LiveData
@@ -8,14 +8,14 @@ import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import io.realm.*
-import net.xblacky.animexstream.BuildConfig
-import net.xblacky.animexstream.utils.Utils
-import net.xblacky.animexstream.utils.constants.C
-import net.xblacky.animexstream.utils.model.AnimeMetaModel
-import net.xblacky.animexstream.utils.model.HomeScreenModel
-import net.xblacky.animexstream.utils.model.UpdateModel
-import net.xblacky.animexstream.utils.parser.HtmlParser
-import net.xblacky.animexstream.utils.realm.InitalizeRealm
+import net.vapormusic.animexstream.BuildConfig
+import net.vapormusic.animexstream.utils.Utils
+import net.vapormusic.animexstream.utils.constants.C
+import net.vapormusic.animexstream.utils.model.AnimeMetaModel
+import net.vapormusic.animexstream.utils.model.HomeScreenModel
+import net.vapormusic.animexstream.utils.model.UpdateModel
+import net.vapormusic.animexstream.utils.parser.HtmlParser
+import net.vapormusic.animexstream.utils.realm.InitalizeRealm
 import okhttp3.ResponseBody
 import timber.log.Timber
 import java.lang.IndexOutOfBoundsException

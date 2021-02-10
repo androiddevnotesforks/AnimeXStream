@@ -1,11 +1,11 @@
-package net.xblacky.animexstream.utils.rertofit
+package net.vapormusic.animexstream.utils.rertofit
 
 import io.reactivex.Observable
-import net.xblacky.animexstream.Private
-import net.xblacky.animexstream.utils.constants.C
-import net.xblacky.animexstream.utils.model.PaheModel.ResolutionURLs.ResolutionURLs
-import net.xblacky.animexstream.utils.model.PaheModel.SessionURLs.SessionsURLs
-import net.xblacky.animexstream.utils.model.SuggestionModel
+import net.vapormusic.animexstream.Private
+import net.vapormusic.animexstream.utils.constants.C
+import net.vapormusic.animexstream.utils.model.PaheModel.ResolutionURLs.ResolutionURLs
+import net.vapormusic.animexstream.utils.model.PaheModel.SessionURLs.SessionsURLs
+import net.vapormusic.animexstream.utils.model.SuggestionModel
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*

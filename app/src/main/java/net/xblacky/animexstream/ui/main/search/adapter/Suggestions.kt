@@ -1,12 +1,12 @@
-package net.xblacky.animexstream.ui.main.search.adapter
+package net.vapormusic.animexstream.ui.main.search.adapter
 
 import android.content.Context
 import android.widget.ArrayAdapter
 import android.widget.Filter
 import android.widget.Filterable
-import net.xblacky.animexstream.ui.main.search.SearchRepository
-import net.xblacky.animexstream.utils.constants.C
-import net.xblacky.animexstream.utils.parser.HtmlParser
+import net.vapormusic.animexstream.ui.main.search.SearchRepository
+import net.vapormusic.animexstream.utils.constants.C
+import net.vapormusic.animexstream.utils.parser.HtmlParser
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.BufferedInputStream

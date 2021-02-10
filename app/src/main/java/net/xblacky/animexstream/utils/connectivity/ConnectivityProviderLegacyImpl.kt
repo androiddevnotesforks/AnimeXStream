@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.utils.connectivity
+package net.vapormusic.animexstream.utils.connectivity
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -8,10 +8,10 @@ import android.net.ConnectivityManager
 import android.net.ConnectivityManager.CONNECTIVITY_ACTION
 import android.net.ConnectivityManager.EXTRA_NETWORK_INFO
 import android.net.NetworkInfo
-import net.xblacky.animexstream.utils.connectivity.base.ConnectivityProvider.NetworkState
-import net.xblacky.animexstream.utils.connectivity.base.ConnectivityProvider.NetworkState.ConnectedState.ConnectedLegacy
-import net.xblacky.animexstream.utils.connectivity.base.ConnectivityProvider.NetworkState.NotConnectedState
-import net.xblacky.animexstream.utils.connectivity.base.ConnectivityProviderBaseImpl
+import net.vapormusic.animexstream.utils.connectivity.base.ConnectivityProvider.NetworkState
+import net.vapormusic.animexstream.utils.connectivity.base.ConnectivityProvider.NetworkState.ConnectedState.ConnectedLegacy
+import net.vapormusic.animexstream.utils.connectivity.base.ConnectivityProvider.NetworkState.NotConnectedState
+import net.vapormusic.animexstream.utils.connectivity.base.ConnectivityProviderBaseImpl
 
 @Suppress("DEPRECATION")
 class ConnectivityProviderLegacyImpl(

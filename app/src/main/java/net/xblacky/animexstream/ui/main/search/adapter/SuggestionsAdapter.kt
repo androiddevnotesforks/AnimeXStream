@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.search.adapter
+package net.vapormusic.animexstream.ui.main.search.adapter
 
 import android.content.Context
 import android.widget.ArrayAdapter

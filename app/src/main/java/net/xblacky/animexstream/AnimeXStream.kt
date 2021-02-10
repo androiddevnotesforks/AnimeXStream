@@ -1,11 +1,11 @@
-package net.xblacky.animexstream
+package net.vapormusic.animexstream
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
 import io.realm.Realm
-import net.xblacky.animexstream.utils.model.SettingsModel
-import net.xblacky.animexstream.utils.realm.InitalizeRealm
+import net.vapormusic.animexstream.utils.model.SettingsModel
+import net.vapormusic.animexstream.utils.realm.InitalizeRealm
 import timber.log.Timber
 import java.security.Security
 import org.conscrypt.Conscrypt

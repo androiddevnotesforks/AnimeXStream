@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.utils.connectivity.base
+package net.vapormusic.animexstream.utils.connectivity.base
 
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
@@ -8,8 +8,8 @@ import android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET
 import android.net.NetworkInfo
 import android.os.Build
 import androidx.annotation.RequiresApi
-import net.xblacky.animexstream.utils.connectivity.ConnectivityProviderImpl
-import net.xblacky.animexstream.utils.connectivity.ConnectivityProviderLegacyImpl
+import net.vapormusic.animexstream.utils.connectivity.ConnectivityProviderImpl
+import net.vapormusic.animexstream.utils.connectivity.ConnectivityProviderLegacyImpl
 
 interface ConnectivityProvider {
     interface ConnectivityStateListener {

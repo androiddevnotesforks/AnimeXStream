@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.utils.model.PaheModel.SessionURLs;
+package net.vapormusic.animexstream.utils.model.PaheModel.SessionURLs;
 
 public class Data
 {

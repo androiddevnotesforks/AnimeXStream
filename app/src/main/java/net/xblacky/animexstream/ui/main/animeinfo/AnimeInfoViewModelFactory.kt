@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.animeinfo
+package net.vapormusic.animexstream.ui.main.animeinfo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

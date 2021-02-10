@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.utils.constants
+package net.vapormusic.animexstream.utils.constants
 
 class C {
     companion object{

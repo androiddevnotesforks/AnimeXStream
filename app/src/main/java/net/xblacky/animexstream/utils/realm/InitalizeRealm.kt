@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.utils.realm
+package net.vapormusic.animexstream.utils.realm
 
 import android.content.Context
 import io.realm.Realm

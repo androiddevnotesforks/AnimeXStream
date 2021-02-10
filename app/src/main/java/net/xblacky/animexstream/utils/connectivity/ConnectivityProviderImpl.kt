@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.utils.connectivity
+package net.vapormusic.animexstream.utils.connectivity
 
 import android.net.ConnectivityManager
 import android.net.ConnectivityManager.NetworkCallback
@@ -6,10 +6,10 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.os.Build
 import androidx.annotation.RequiresApi
-import net.xblacky.animexstream.utils.connectivity.base.ConnectivityProvider.NetworkState
-import net.xblacky.animexstream.utils.connectivity.base.ConnectivityProvider.NetworkState.ConnectedState.Connected
-import net.xblacky.animexstream.utils.connectivity.base.ConnectivityProvider.NetworkState.NotConnectedState
-import net.xblacky.animexstream.utils.connectivity.base.ConnectivityProviderBaseImpl
+import net.vapormusic.animexstream.utils.connectivity.base.ConnectivityProvider.NetworkState
+import net.vapormusic.animexstream.utils.connectivity.base.ConnectivityProvider.NetworkState.ConnectedState.Connected
+import net.vapormusic.animexstream.utils.connectivity.base.ConnectivityProvider.NetworkState.NotConnectedState
+import net.vapormusic.animexstream.utils.connectivity.base.ConnectivityProviderBaseImpl
 
 @RequiresApi(Build.VERSION_CODES.N)
 class ConnectivityProviderImpl(private val cm: ConnectivityManager) :

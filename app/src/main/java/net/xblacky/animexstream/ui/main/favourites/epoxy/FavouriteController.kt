@@ -1,8 +1,8 @@
-package net.xblacky.animexstream.ui.main.favourites.epoxy
+package net.vapormusic.animexstream.ui.main.favourites.epoxy
 
 import com.airbnb.epoxy.TypedEpoxyController
-import net.xblacky.animexstream.utils.model.AnimeMetaModel
-import net.xblacky.animexstream.utils.model.FavouriteModel
+import net.vapormusic.animexstream.utils.model.AnimeMetaModel
+import net.vapormusic.animexstream.utils.model.FavouriteModel
 
 class FavouriteController(private var adapterCallbacks: EpoxySearchAdapterCallbacks) :
     TypedEpoxyController<ArrayList<FavouriteModel>>() {

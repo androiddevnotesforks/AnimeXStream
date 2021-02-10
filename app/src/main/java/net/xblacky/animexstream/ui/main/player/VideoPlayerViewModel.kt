@@ -1,14 +1,14 @@
-package net.xblacky.animexstream.ui.main.player
+package net.vapormusic.animexstream.ui.main.player
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.exoplayer2.upstream.HttpDataSource
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
-import net.xblacky.animexstream.utils.CommonViewModel
-import net.xblacky.animexstream.utils.constants.C
-import net.xblacky.animexstream.utils.model.Content
-import net.xblacky.animexstream.utils.parser.HtmlParser
+import net.vapormusic.animexstream.utils.CommonViewModel
+import net.vapormusic.animexstream.utils.constants.C
+import net.vapormusic.animexstream.utils.model.Content
+import net.vapormusic.animexstream.utils.parser.HtmlParser
 import okhttp3.ResponseBody
 import retrofit2.HttpException
 import timber.log.Timber

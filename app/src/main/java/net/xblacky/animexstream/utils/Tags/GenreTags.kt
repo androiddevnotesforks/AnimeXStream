@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.utils.Tags
+package net.vapormusic.animexstream.utils.Tags
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.tags_genre.view.*
-import net.xblacky.animexstream.R
+import net.vapormusic.animexstream.R
 
 class GenreTags(var context: Context){
 

@@ -1,15 +1,15 @@
-package net.xblacky.animexstream.ui.main.animeinfo
+package net.vapormusic.animexstream.ui.main.animeinfo
 
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
-import net.xblacky.animexstream.utils.model.FavouriteModel
-import net.xblacky.animexstream.utils.model.PaheModel.ResolutionURLs.ResolutionURLs
-import net.xblacky.animexstream.utils.model.PaheModel.SessionURLs.SessionsURLs
-import net.xblacky.animexstream.utils.realm.InitalizeRealm
-import net.xblacky.animexstream.utils.rertofit.NetworkInterface
-import net.xblacky.animexstream.utils.rertofit.RetrofitHelper
+import net.vapormusic.animexstream.utils.model.FavouriteModel
+import net.vapormusic.animexstream.utils.model.PaheModel.ResolutionURLs.ResolutionURLs
+import net.vapormusic.animexstream.utils.model.PaheModel.SessionURLs.SessionsURLs
+import net.vapormusic.animexstream.utils.realm.InitalizeRealm
+import net.vapormusic.animexstream.utils.rertofit.NetworkInterface
+import net.vapormusic.animexstream.utils.rertofit.RetrofitHelper
 import okhttp3.ResponseBody
 
 class AnimeInfoRepository {

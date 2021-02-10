@@ -1,4 +1,4 @@
-package net.xblacky.animexstream;
+package net.vapormusic.animexstream;
 
 import android.os.Build;
 import android.util.Log;

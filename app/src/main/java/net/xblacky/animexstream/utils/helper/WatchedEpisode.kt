@@ -1,9 +1,9 @@
-package net.xblacky.animexstream.utils.helper
+package net.vapormusic.animexstream.utils.helper
 
 import io.realm.Realm
 import io.realm.RealmResults
-import net.xblacky.animexstream.utils.model.WatchedEpisode
-import net.xblacky.animexstream.utils.realm.InitalizeRealm
+import net.vapormusic.animexstream.utils.model.WatchedEpisode
+import net.vapormusic.animexstream.utils.realm.InitalizeRealm
 import timber.log.Timber
 import java.util.*
 import kotlin.collections.HashMap
@@ -14,7 +14,7 @@ class WatchedEpisode(private var animeName: String){
     private val watchedMap: HashMap<Int, Long> = HashMap()
 
     init {
-        results = realm.where(net.xblacky.animexstream.utils.model.WatchedEpisode::class.java)
+        results = realm.where(net.vapormusic.animexstream.utils.model.WatchedEpisode::class.java)
             .equalTo("animeName", animeName).findAll()
         updateWatchMap(results)
         results?.addChangeListener { newResult->

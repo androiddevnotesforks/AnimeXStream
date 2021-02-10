@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.home.epoxy
+package net.vapormusic.animexstream.ui.main.home.epoxy
 
 import android.view.View
 import android.widget.TextView
@@ -13,9 +13,9 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.recycler_anime_mini_header.view.*
 import kotlinx.android.synthetic.main.recycler_anime_popular.view.*
 import kotlinx.android.synthetic.main.recycler_anime_recent_sub_dub_2.view.*
-import net.xblacky.animexstream.R
-import net.xblacky.animexstream.utils.Tags.GenreTags
-import net.xblacky.animexstream.utils.model.AnimeMetaModel
+import net.vapormusic.animexstream.R
+import net.vapormusic.animexstream.utils.Tags.GenreTags
+import net.vapormusic.animexstream.utils.model.AnimeMetaModel
 import org.apmem.tools.layouts.FlowLayout
 import kotlinx.android.synthetic.main.recycler_anime_popular.view.animeCardView as animeCardViewSubDub
 import kotlinx.android.synthetic.main.recycler_anime_popular.view.animeTitle as animeTitleSubDub

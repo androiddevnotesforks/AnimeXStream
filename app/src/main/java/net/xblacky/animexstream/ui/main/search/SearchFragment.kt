@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.search
+package net.vapormusic.animexstream.ui.main.search
 
 import android.content.Context
 import android.os.Bundle
@@ -16,16 +16,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import net.xblacky.animexstream.utils.connectivity.base.ConnectivityProvider
+import net.vapormusic.animexstream.utils.connectivity.base.ConnectivityProvider
 import kotlinx.android.synthetic.main.fragment_search.view.*
 import kotlinx.android.synthetic.main.loading.view.*
-import net.xblacky.animexstream.R
-import net.xblacky.animexstream.ui.main.search.adapter.SuggestionsAdapter
-import net.xblacky.animexstream.ui.main.search.epoxy.SearchController
-import net.xblacky.animexstream.utils.CommonViewModel2
-import net.xblacky.animexstream.utils.ItemOffsetDecoration
-import net.xblacky.animexstream.utils.Utils
-import net.xblacky.animexstream.utils.model.AnimeMetaModel
+import net.vapormusic.animexstream.R
+import net.vapormusic.animexstream.ui.main.search.adapter.SuggestionsAdapter
+import net.vapormusic.animexstream.ui.main.search.epoxy.SearchController
+import net.vapormusic.animexstream.utils.CommonViewModel2
+import net.vapormusic.animexstream.utils.ItemOffsetDecoration
+import net.vapormusic.animexstream.utils.Utils
+import net.vapormusic.animexstream.utils.model.AnimeMetaModel
 
 
 class SearchFragment : Fragment(), View.OnClickListener,

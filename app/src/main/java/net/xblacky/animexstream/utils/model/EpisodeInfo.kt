@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.utils.model
+package net.vapormusic.animexstream.utils.model
 
 data class EpisodeInfo(
     var vidcdnUrl: String? =null,

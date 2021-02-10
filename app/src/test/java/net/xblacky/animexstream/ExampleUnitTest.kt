@@ -1,4 +1,4 @@
-package net.xblacky.animexstream
+package net.vapormusic.animexstream
 
 import org.junit.Test
 

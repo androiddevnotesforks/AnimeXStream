@@ -1,5 +1,5 @@
 
-package net.xblacky.animexstream.utils.model.PaheModel.ResolutionURLs;
+package net.vapormusic.animexstream.utils.model.PaheModel.ResolutionURLs;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;

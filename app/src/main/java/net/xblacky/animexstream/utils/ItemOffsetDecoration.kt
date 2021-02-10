@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.utils
+package net.vapormusic.animexstream.utils
 
 import android.content.Context
 import android.graphics.Rect

@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.favourites
+package net.vapormusic.animexstream.ui.main.favourites
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -17,14 +17,14 @@ import io.reactivex.observers.DisposableObserver
 import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_favourite.view.*
 import kotlinx.android.synthetic.main.fragment_search.view.*
-import net.xblacky.animexstream.R
-import net.xblacky.animexstream.ui.main.animeinfo.AnimeInfoRepository
-import net.xblacky.animexstream.ui.main.favourites.epoxy.FavouriteController
-import net.xblacky.animexstream.utils.ItemOffsetDecoration
-import net.xblacky.animexstream.utils.Utils
-import net.xblacky.animexstream.utils.model.FavouriteModel
-import net.xblacky.animexstream.utils.model.SettingsModel
-import net.xblacky.animexstream.utils.realm.InitalizeRealm
+import net.vapormusic.animexstream.R
+import net.vapormusic.animexstream.ui.main.animeinfo.AnimeInfoRepository
+import net.vapormusic.animexstream.ui.main.favourites.epoxy.FavouriteController
+import net.vapormusic.animexstream.utils.ItemOffsetDecoration
+import net.vapormusic.animexstream.utils.Utils
+import net.vapormusic.animexstream.utils.model.FavouriteModel
+import net.vapormusic.animexstream.utils.model.SettingsModel
+import net.vapormusic.animexstream.utils.realm.InitalizeRealm
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import timber.log.Timber

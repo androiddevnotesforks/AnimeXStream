@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.player
+package net.vapormusic.animexstream.ui.main.player
 
 import android.content.Context
 import android.media.AudioFocusRequest
@@ -38,17 +38,17 @@ import kotlinx.android.synthetic.main.exo_player_custom_controls.view.*
 import kotlinx.android.synthetic.main.fragment_video_player.*
 import kotlinx.android.synthetic.main.fragment_video_player.view.*
 import kotlinx.android.synthetic.main.fragment_video_player_placeholder.view.*
-import net.xblacky.animexstream.R
-import net.xblacky.animexstream.Tls12SocketFactory
-import net.xblacky.animexstream.ui.main.animeinfo.AnimeInfoRepository
-import net.xblacky.animexstream.utils.constants.C.Companion.ERROR_CODE_DEFAULT
-import net.xblacky.animexstream.utils.constants.C.Companion.NO_INTERNET_CONNECTION
-import net.xblacky.animexstream.utils.constants.C.Companion.RESPONSE_UNKNOWN
-import net.xblacky.animexstream.utils.model.Content
-import net.xblacky.animexstream.utils.model.PaheModel.ResolutionURLs.ResolutionURLs
-import net.xblacky.animexstream.utils.model.PaheModel.SessionURLs.SessionsURLs
-import net.xblacky.animexstream.utils.model.SettingsModel
-import net.xblacky.animexstream.utils.realm.InitalizeRealm
+import net.vapormusic.animexstream.R
+import net.vapormusic.animexstream.Tls12SocketFactory
+import net.vapormusic.animexstream.ui.main.animeinfo.AnimeInfoRepository
+import net.vapormusic.animexstream.utils.constants.C.Companion.ERROR_CODE_DEFAULT
+import net.vapormusic.animexstream.utils.constants.C.Companion.NO_INTERNET_CONNECTION
+import net.vapormusic.animexstream.utils.constants.C.Companion.RESPONSE_UNKNOWN
+import net.vapormusic.animexstream.utils.model.Content
+import net.vapormusic.animexstream.utils.model.PaheModel.ResolutionURLs.ResolutionURLs
+import net.vapormusic.animexstream.utils.model.PaheModel.SessionURLs.SessionsURLs
+import net.vapormusic.animexstream.utils.model.SettingsModel
+import net.vapormusic.animexstream.utils.realm.InitalizeRealm
 import okhttp3.*
 import org.apache.commons.lang3.StringUtils
 import org.mozilla.javascript.Scriptable

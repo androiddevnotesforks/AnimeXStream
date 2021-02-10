@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.animeinfo.epoxy
+package net.vapormusic.animexstream.ui.main.animeinfo.epoxy
 
 import android.content.Intent
 import android.view.View
@@ -6,12 +6,12 @@ import androidx.lifecycle.MutableLiveData
 import com.airbnb.epoxy.TypedEpoxyController
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
-import net.xblacky.animexstream.ui.main.animeinfo.AnimeInfoRepository
-import net.xblacky.animexstream.ui.main.player.VideoPlayerActivity
-import net.xblacky.animexstream.utils.model.AnimeInfoModel
-import net.xblacky.animexstream.utils.model.EpisodeModel
-import net.xblacky.animexstream.utils.model.FavouriteModel
-import net.xblacky.animexstream.utils.rertofit.NetworkInterface
+import net.vapormusic.animexstream.ui.main.animeinfo.AnimeInfoRepository
+import net.vapormusic.animexstream.ui.main.player.VideoPlayerActivity
+import net.vapormusic.animexstream.utils.model.AnimeInfoModel
+import net.vapormusic.animexstream.utils.model.EpisodeModel
+import net.vapormusic.animexstream.utils.model.FavouriteModel
+import net.vapormusic.animexstream.utils.rertofit.NetworkInterface
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import timber.log.Timber
@@ -19,7 +19,7 @@ import timber.log.Timber
 class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>(){
     var animeName: String = ""
     var MALAnimeID: String? = ""
-    private lateinit var isWatchedHelper: net.xblacky.animexstream.utils.helper.WatchedEpisode
+    private lateinit var isWatchedHelper: net.vapormusic.animexstream.utils.helper.WatchedEpisode
     private var _animeInfoModel: MutableLiveData<AnimeInfoModel> = MutableLiveData()
     override fun buildModels(data: ArrayList<EpisodeModel>?) {
         data?.forEach {
@@ -40,7 +40,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>(){
 
     fun setAnime(animeName: String){
         this.animeName = animeName
-        isWatchedHelper = net.xblacky.animexstream.utils.helper.WatchedEpisode(animeName)
+        isWatchedHelper = net.vapormusic.animexstream.utils.helper.WatchedEpisode(animeName)
     }
 
     fun setMALID( animeName: String){

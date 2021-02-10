@@ -1,12 +1,12 @@
-package net.xblacky.animexstream.utils
+package net.vapormusic.animexstream.utils
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import net.xblacky.animexstream.R
-import net.xblacky.animexstream.utils.constants.C
-import net.xblacky.animexstream.utils.model.ErrorModel
-import net.xblacky.animexstream.utils.model.LoadingModel2
+import net.vapormusic.animexstream.R
+import net.vapormusic.animexstream.utils.constants.C
+import net.vapormusic.animexstream.utils.model.ErrorModel
+import net.vapormusic.animexstream.utils.model.LoadingModel2
 import retrofit2.HttpException
 import java.net.HttpURLConnection
 import java.net.SocketException

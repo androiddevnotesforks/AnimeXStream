@@ -1,4 +1,4 @@
-package net.xblacky.animexstream.ui.main.settings
+package net.vapormusic.animexstream.ui.main.settings
 
 import android.content.Intent
 import android.content.res.Configuration
@@ -17,12 +17,12 @@ import com.axiel7.moelist.utils.PkceGenerator
 import io.realm.Realm
 import io.realm.Realm.getDefaultInstance
 import kotlinx.android.synthetic.main.fragment_settings.view.*
-import net.xblacky.animexstream.MainActivity
-import net.xblacky.animexstream.Private
-import net.xblacky.animexstream.R
-import net.xblacky.animexstream.utils.constants.C
-import net.xblacky.animexstream.utils.model.SettingsModel
-import net.xblacky.animexstream.utils.realm.InitalizeRealm
+import net.vapormusic.animexstream.MainActivity
+import net.vapormusic.animexstream.Private
+import net.vapormusic.animexstream.R
+import net.vapormusic.animexstream.utils.constants.C
+import net.vapormusic.animexstream.utils.model.SettingsModel
+import net.vapormusic.animexstream.utils.realm.InitalizeRealm
 import timber.log.Timber
 
 class SettingsFragment: Fragment(), View.OnClickListener {

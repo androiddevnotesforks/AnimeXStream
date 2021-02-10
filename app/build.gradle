@@ -15,7 +15,7 @@ android {
 //        release {
 //            storeFile file('E:\\Projects\\animexstream.jks')
 //            storePassword 'labrador1'
-//            keyAlias = 'xblacky'
+//            keyAlias = 'vapormusic'
 //            keyPassword 'labrador1'
 //        }
 //    }
@@ -29,11 +29,11 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
     defaultConfig {
-        applicationId "net.xblacky.animexstream"
+        applicationId "net.vapormusic.animexstream"
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 10
-        versionName "0.3.3"
+        versionName "3.0.4"
         vectorDrawables.useSupportLibrary = true
         archivesBaseName = "AnimexStream-v$versionName"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -142,5 +142,6 @@ dependencies {
     implementation 'org.mozilla:rhino:1.7.13'
 
     implementation 'com.simplecityapps:recyclerview-fastscroll:2.0.1'
+    implementation 'com.github.javiersantos:AppUpdater:2.7'
 
 }

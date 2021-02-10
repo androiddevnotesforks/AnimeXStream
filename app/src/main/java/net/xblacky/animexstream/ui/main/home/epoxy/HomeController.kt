@@ -1,15 +1,15 @@
-package net.xblacky.animexstream.ui.main.home.epoxy
+package net.vapormusic.animexstream.ui.main.home.epoxy
 
 import android.view.View
 import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.Carousel.setDefaultGlobalSnapHelperFactory
 import com.airbnb.epoxy.CarouselModel_
 import com.airbnb.epoxy.TypedEpoxyController
-import net.xblacky.animexstream.R
-import net.xblacky.animexstream.utils.constants.C
-import net.xblacky.animexstream.utils.epoxy.AnimeCommonModel_
-import net.xblacky.animexstream.utils.model.AnimeMetaModel
-import net.xblacky.animexstream.utils.model.HomeScreenModel
+import net.vapormusic.animexstream.R
+import net.vapormusic.animexstream.utils.constants.C
+import net.vapormusic.animexstream.utils.epoxy.AnimeCommonModel_
+import net.vapormusic.animexstream.utils.model.AnimeMetaModel
+import net.vapormusic.animexstream.utils.model.HomeScreenModel
 
 
 class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyController<ArrayList<HomeScreenModel>>() {
