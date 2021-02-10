@@ -10,5 +10,6 @@ open class FavouriteModel(
     var categoryUrl: String? ="",
     var imageUrl: String? ="",
     var releasedDate: String? = null,
+    var MAL_ID: String? = "",
     var insertionTime: Long = System.currentTimeMillis()
 ): RealmObject()

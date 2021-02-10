@@ -11,24 +11,24 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.gson.reflect.TypeToken.getArray
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_favourite.view.*
-import kotlinx.android.synthetic.main.fragment_favourite.view.toolbarText
-import kotlinx.android.synthetic.main.fragment_favourite.view.topView
 import kotlinx.android.synthetic.main.fragment_search.view.*
 import net.xblacky.animexstream.R
+import net.xblacky.animexstream.ui.main.animeinfo.AnimeInfoRepository
 import net.xblacky.animexstream.ui.main.favourites.epoxy.FavouriteController
 import net.xblacky.animexstream.utils.ItemOffsetDecoration
 import net.xblacky.animexstream.utils.Utils
-import net.xblacky.animexstream.utils.constants.C
 import net.xblacky.animexstream.utils.model.FavouriteModel
 import net.xblacky.animexstream.utils.model.SettingsModel
 import net.xblacky.animexstream.utils.realm.InitalizeRealm
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import timber.log.Timber
+
 
 class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallbacks,View.OnClickListener {
     private lateinit var rootView: View
@@ -45,21 +45,65 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
         setAdapters()
         transitionListener()
         setClickListeners()
-        a()
+      //  convertPreviousFavtoMAL()
+        loadMALFavList()
         return rootView
     }
 
-    fun a(){
-        CompositeDisposable().add(
+    fun convertPreviousFavtoMAL(){
+        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());
+        val result = realm.where(FavouriteModel::class.java).equalTo("MAL_ID", "-1").findAll()
+        if( result != null ){
+            for (item in result){
+//                CompositeDisposable().add(
+//                    AnimeInfoRepository().MALAnimeID(item.animeName!!).subscribeWith(MALAnimeIDObserver())
+//                )
+            }
+        }
 
-            FavouriteRepository().fetchMALFavoriteList("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjQwNmE1MDhjNzhmMDM3MmQzZWZiNDIzNTIyNmY1N2IwZmY5NTQ4YmU4NDgxZGU3ODdhMjJlNDQ2MWE3MDVjZWEzMGFkNmQ3OTY5MDI1ODIzIn0.eyJhdWQiOiJkZjM2OGMwYjgyODZiNzM5ZWU3N2YwYjkwNTk2MDcwMCIsImp0aSI6IjQwNmE1MDhjNzhmMDM3MmQzZWZiNDIzNTIyNmY1N2IwZmY5NTQ4YmU4NDgxZGU3ODdhMjJlNDQ2MWE3MDVjZWEzMGFkNmQ3OTY5MDI1ODIzIiwiaWF0IjoxNjEyNzA3NTk0LCJuYmYiOjE2MTI3MDc1OTQsImV4cCI6MTYxNTEyNjc5NCwic3ViIjoiNTMyNjcwOSIsInNjb3BlcyI6W119.pve5D2w_PCOBP2pwM23JE3HqwQBNWxNnFINt2u90Ox1l70P6-KHScQQj0KXez8FyPo4-scenAj56uHEbf0fhSl7jxSpIaCDdBZd6ut9sDy4xFJeqZtFUd9Z54b4fb7lbsHnoaBzoeUnp36tV2WeIhUB5uQyCkrEl4Y_DEN3FCMSFcrSBHfI-FKBPQHxWkJoE6-qKvt5UM3mfIJ7nZrFRIRKDB04fnnEGPhyqFOA2kB_8MXv68vc9ctL2fyCljQrnyaVOlxUtmwZBM7P_54971WWgBLnMYRfD4Px6plSpShaZeKMkhwp5ctV-rYLzVZ0c5NVeLIUQ0VQ0QIHvxKXgAA").subscribeWith(helloobserver())
-        )
+    }
+
+    fun loadMALFavList(){
+        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());
+        realm.executeTransaction { realm1: Realm ->
+            val  settings = realm1.where(SettingsModel::class.java).findFirst()
+            if (settings != null  ) {
+                if (settings.malsyncon){
+                CompositeDisposable().add(
+                        FavouriteRepository().fetchMALFavoriteList(settings.malaccesstoken).subscribeWith(helloobserver())
+                )
+            }}
+
+        }
+
     }
 
     private fun helloobserver(): DisposableObserver<ResponseBody> {
         return object : DisposableObserver<ResponseBody>() {
             override fun onNext(t: ResponseBody) {
-                Timber.e("mal 4 :" + t.string())
+              //  Timber.e("mal 4 :" + t.string())
+                val obj = JSONObject(t.string())
+                val array = obj.getJSONArray("data")
+
+                for (i in 0 until array.length()) {
+                    val obj = array.getJSONObject(i).getJSONObject("node")
+                    AnimeInfoRepository().addMALToFavourite(obj.getString("id"),
+                            FavouriteModel(
+                                    ID = "MAL_NULL" + obj.getString("id"),
+                                    categoryUrl = "MAL_NULL" + obj.getString("title"),
+                                    animeName = obj.getString("title"),
+                                    releasedDate = obj.getString("start_date").substring(0,4),
+                                    MAL_ID = obj.getString("id"),
+                                    imageUrl = obj.getJSONObject("main_picture").getString("medium")
+                            )
+                    )
+
+                    //Iterate through the elements of the array i.
+                    //Get thier value.
+                    //Get the value for the first element and the value for the last element.
+                }
+
+
             }
 
             override fun onComplete() {

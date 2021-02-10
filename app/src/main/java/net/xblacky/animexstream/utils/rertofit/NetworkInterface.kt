@@ -334,7 +334,8 @@ class NetworkInterface {
             @Header("Authorization") access_token : String = "",
             @Header("Accept-Encoding") accept : String = "gzip",
             @Header("User-Agent") ua : String = "MAL (android, 1.0.8)",
-            @Header("Content-Length") length: String  = "0"
+            @Header("Content-Length") length: String  = "0",
+            @Query("fields") fields: String  = "start_date"
 
         ): Observable<ResponseBody>
 

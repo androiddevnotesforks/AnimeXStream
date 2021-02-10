@@ -90,8 +90,16 @@ class AnimeInfoRepository {
 
     fun addToFavourite(favouriteModel: FavouriteModel){
         realm.executeTransaction {
+
             it.insertOrUpdate(favouriteModel)
         }
+    }
+    fun addMALToFavourite(id: String, favouriteModel: FavouriteModel){
+        val result = realm.where(FavouriteModel::class.java).equalTo("MAL_ID", id).findFirst()
+        if(result == null ){
+        realm.executeTransaction {
+            it.insertOrUpdate(favouriteModel)
+        }}
     }
 
     fun removeFromFavourite(id: String){

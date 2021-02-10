@@ -10,6 +10,7 @@ import net.xblacky.animexstream.ui.main.animeinfo.AnimeInfoRepository
 import net.xblacky.animexstream.ui.main.player.VideoPlayerActivity
 import net.xblacky.animexstream.utils.model.AnimeInfoModel
 import net.xblacky.animexstream.utils.model.EpisodeModel
+import net.xblacky.animexstream.utils.model.FavouriteModel
 import net.xblacky.animexstream.utils.rertofit.NetworkInterface
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -55,6 +56,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>(){
                 val obj = JSONObject(t.string())
                 val array = obj.getJSONArray("results")
                 MALAnimeID= array.getJSONObject(0).getString("mal_id")
+
                 Timber.e("mal id 2: " + MALAnimeID)
 
             }
