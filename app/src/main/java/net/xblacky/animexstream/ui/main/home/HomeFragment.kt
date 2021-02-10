@@ -72,7 +72,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
 
     private fun setClickListeners() {
         rootView.header.setOnClickListener(this)
-        rootView.search.setOnClickListener(this)
+        rootView.settingsFragment.setOnClickListener(this)
         rootView.favorite.setOnClickListener(this)
     }
 
@@ -87,8 +87,8 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
                 }
 
             }
-            R.id.search -> {
-              try{  findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSearchFragment())} catch (e: Exception){}
+            R.id.settingsFragment -> {
+              try{  findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettingsFragment())} catch (e: Exception){}
             }
             R.id.favorite -> {
                 val snackbar: Snackbar = Snackbar.make(rootView, "", Snackbar.LENGTH_SHORT)
