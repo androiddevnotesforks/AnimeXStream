@@ -296,14 +296,13 @@ class NetworkInterface {
         @Headers(
             C.USER_AGENT_MAL
         )
-        @FormUrlEncoded
-        @POST("https://myanimelist.net/v3/users/@me/favorites/anime/{anime_id}")
+        @POST("https://api.myanimelist.net/v3/users/@me/favorites/anime/{anime_id}")
 
         fun get(
             @Header( "x-authorization") access_token : String = "",
             @Path("anime_id") anime_id : String = "",
-            @Field("x-mal-client-id") client_id : String = Private.MAL_CLIENT_ID,
-            @Field("redirect_uri") redirect_uri : String = C.AUTH_DEEP_LINK
+            @Header("x-mal-client-id") client_id : String = Private.MAL_CLIENT_ID,
+            @Header("redirect_uri") redirect_uri : String = C.AUTH_DEEP_LINK
 
         ): Observable<ResponseBody>
 
@@ -312,14 +311,13 @@ class NetworkInterface {
         @Headers(
             C.USER_AGENT_MAL
         )
-        @FormUrlEncoded
-        @DELETE("https://myanimelist.net/v3/users/@me/favorites/anime/{anime_id}")
+        @DELETE("https://api.myanimelist.net/v3/users/@me/favorites/anime/{anime_id}")
 
         fun get(
             @Header( "x-authorization") access_token : String = "",
             @Path("anime_id") anime_id : String = "",
-            @Field("x-mal-client-id") client_id : String = Private.MAL_CLIENT_ID,
-            @Field("redirect_uri") redirect_uri : String = C.AUTH_DEEP_LINK
+            @Header("x-mal-client-id") client_id : String = Private.MAL_CLIENT_ID,
+            @Header("redirect_uri") redirect_uri : String = C.AUTH_DEEP_LINK
 
         ): Observable<ResponseBody>
 

@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.main_activity.*
 import net.xblacky.animexstream.ui.main.animeinfo.AnimeInfoRepository
 import net.xblacky.animexstream.ui.main.favourites.FavouriteRepository
 import net.xblacky.animexstream.utils.constants.C
+import net.xblacky.animexstream.utils.model.FavouriteModel
 import net.xblacky.animexstream.utils.model.SettingsModel
 import net.xblacky.animexstream.utils.realm.InitalizeRealm
 import okhttp3.ResponseBody
@@ -144,9 +145,19 @@ class MainActivity : AppCompatActivity() {
                         Timber.e("mal at: " + settings.malaccesstoken)
                         Timber.e("mal rt: " + settings.malrefreshtoken)
                     }
+                    val settings3 = realm1.where(SettingsModel::class.java).findFirst()
+                    val prevfav = realm1.where(FavouriteModel::class.java).findAll()
+                    if (prevfav != null){
+                        for (item in prevfav){
+                            CompositeDisposable().add(
+                                    FavouriteRepository().SetMALFavorite(settings3!!.malaccesstoken,item.MAL_ID!!).subscribeWith(generateMALAccessToken(965))
 
+                            )
+                        }
+                    }
 
                 }
+
             } else if (type == C.MAL_REFRESH_ACCESS){
                     val obj = JSONObject(t.string().toString())
                     val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());

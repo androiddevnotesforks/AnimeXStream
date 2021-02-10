@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import io.realm.Realm
+import net.xblacky.animexstream.ui.main.favourites.FavouriteRepository
 import net.xblacky.animexstream.ui.main.search.SearchRepository
 import net.xblacky.animexstream.utils.CommonViewModel
 import net.xblacky.animexstream.utils.CommonViewModel2
@@ -32,6 +33,7 @@ class AnimeInfoViewModel(categoryUrl: String) : CommonViewModel() {
     private var _isFavourite: MutableLiveData<Boolean> = MutableLiveData(false)
     var isFavourite: LiveData<Boolean> = _isFavourite
     var malnewcategoryUrl: String? = "MAL_NULL"
+    var malnewid: String? = "MAL_NULL"
 
     init {
         this.categoryUrl = categoryUrl
@@ -147,16 +149,18 @@ class AnimeInfoViewModel(categoryUrl: String) : CommonViewModel() {
                 val obj = JSONObject(t.string())
                 val array = obj.getJSONArray("results")
                 animeInfoModel.value?.MALAnimeID = array.getJSONObject(0).getString("mal_id")
-                animeInfoRepository.addMALToFavourite(array.getJSONObject(0).getString("mal_id"),
+                malnewid  = array.getJSONObject(0).getString("mal_id")
+                animeInfoRepository.addMALToFavourite(malnewid!!,
                     FavouriteModel(
                         ID = model?.id,
                         categoryUrl = categoryUrl,
                         animeName = model?.animeTitle,
                         releasedDate = model?.releasedTime,
-                        MAL_ID =  array.getJSONObject(0).getString("mal_id") ,
+                        MAL_ID =  malnewid!! ,
                         imageUrl = model?.imageUrl
                     )
                 )
+                updateMALFavorite(1)
             }
 
             override fun onComplete() {
@@ -182,10 +186,30 @@ class AnimeInfoViewModel(categoryUrl: String) : CommonViewModel() {
         if (_isFavourite.value!!) {
             animeInfoModel.value?.id?.let { animeInfoRepository.removeFromFavourite(it) }
             _isFavourite.value = false
+             updateMALFavorite(0)
+
         } else {
             saveFavourite()
 
         }
+    }
+
+    fun updateMALFavorite(int: Int){
+        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());
+        val  settings = realm.where(SettingsModel::class.java).findFirst()
+
+        if(settings!= null && settings.malsyncon){
+        if (int == 1){
+            compositeDisposable.add(
+                FavouriteRepository().SetMALFavorite(settings.malaccesstoken,malnewid!!).subscribeWith(getAnimeInfoObserver(999))
+            )
+        } else {
+            compositeDisposable.add(
+                FavouriteRepository().DeleteMALFavorite(settings.malaccesstoken,malnewid!!).subscribeWith(getAnimeInfoObserver(999))
+            )
+        }
+        }
+
     }
 
     private fun saveFavourite() {
