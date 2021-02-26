@@ -2,6 +2,7 @@ package net.vapormusic.animexstream.utils.parser
 
 
 import io.realm.RealmList
+import net.vapormusic.animexstream.BuildConfig
 import net.vapormusic.animexstream.utils.constants.C
 import net.vapormusic.animexstream.utils.model.*
 import net.vapormusic.animexstream.utils.rertofit.RetrofitHelper.getRetrofitInstance
@@ -206,21 +207,35 @@ class HtmlParser {
             val pattern = Pattern.compile(C.M3U8_REGEX_PATTERN)
             val matcher = pattern.matcher(info.toString())
             return try {
-                m3u8Url = StringUtils.substringBetween(response,"sources:[{file: '","',")
-                Timber.e("vapor true m3u8: "+response)
-                if(m3u8Url == null ) {
-                while (matcher.find()) {
-                    Timber.e(matcher.group((0)))
-                    if (matcher.group(0)!!.contains("m3u8") || matcher.group(0)!!
-                            .contains("googlevideo")
-                            || matcher.group(0)!!.contains("")
-                    ) {
-                        m3u8Url = matcher.group(0)
-                        break
-                    }
-                }
 
-                }
+                    while (matcher.find()) {
+                        Timber.e(matcher.group((0)))
+                        if (matcher.group(0)!!.contains("m3u8") || matcher.group(0)!!
+                                .contains("googlevideo") || matcher.group(0)!!
+                                .contains("")
+                        ) {
+                            m3u8Url = matcher.group(0)
+                            break
+                        }
+                    print("vapor v3:" +m3u8Url)
+                    }
+
+//                else{
+//                m3u8Url = StringUtils.substringBetween(response,"sources:[{file: '","',")
+//                Timber.e("vapor true m3u8: "+response)
+//                if(m3u8Url == null ) {
+//                while (matcher.find()) {
+//                    Timber.e(matcher.group((0)))
+//                    if (matcher.group(0)!!.contains("m3u8") || matcher.group(0)!!
+//                            .contains("googlevideo")
+//                            || matcher.group(0)!!.contains("")
+//                    ) {
+//                        m3u8Url = matcher.group(0)
+//                        break
+//                    }
+//                }
+//
+//                }}
                 m3u8Url
             } catch (npe: NullPointerException) {
                 m3u8Url

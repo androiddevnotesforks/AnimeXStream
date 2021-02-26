@@ -1,6 +1,7 @@
 package net.vapormusic.animexstream.ui.main.player
 
 import android.content.Context
+import android.content.Intent
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.net.Uri
@@ -9,7 +10,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -59,6 +63,7 @@ import java.nio.charset.StandardCharsets
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 
+
 class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListener,
     AudioManager.OnAudioFocusChangeListener {
 
@@ -93,6 +98,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     private var episodenum = "1" ;
     private var pahejs = "" ;
     private var GESTURE_FLAG = 0;
+    private var isGoogleCDN = false
 
 
 
@@ -152,11 +158,12 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         rootView.exo_full_Screen.setOnClickListener(this)
         rootView.exo_track_selection_view.setOnClickListener(this)
         rootView.exo_speed_selection_view.setOnClickListener(this)
+        rootView.exo_download.setOnClickListener(this)
         rootView.errorButton.setOnClickListener(this)
         rootView.back.setOnClickListener(this)
         rootView.nextEpisode.setOnClickListener(this)
         if(AdvancedControlsEnabled == true){
-        rootView.scrolllayout.setOnTouchListener(object: OnSwipeTouchListener(this.activity) {
+        rootView.scrolllayout.setOnTouchListener(object : OnSwipeTouchListener(this.activity) {
             override fun onSwipeLeft() {
                 Log.e("ViewSwipe", "Left")
             }
@@ -287,6 +294,9 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             R.id.previousEpisode -> {
                 playPreviousEpisode()
             }
+            R.id.exo_download -> {
+                downloadEpisode()
+            }
 
         }
     }
@@ -311,6 +321,13 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 ////        })
 //        return true;
 //    }
+
+    private fun downloadEpisode(){
+        val url = content.url
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data = Uri.parse(url)
+        startActivity(i)
+    }
 
     private fun toggleFullView() {
         if (isFullScreen) {
@@ -848,11 +865,15 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                         realm1.insertOrUpdate(settings2)
                         AnimePaheEnabled = false
                         AdvancedControlsEnabled = true
+                        isGoogleCDN = false
                         // set the fields here
                     } else {
                         AnimePaheEnabled = results.paheanimeon
                         AdvancedControlsEnabled = results.playercontrolson
+                        isGoogleCDN = results.googlecdn
+
                     }
+                    if (!isGoogleCDN){exo_download.visibility = View.GONE}
 
                 }
         } catch (ignored: java.lang.Exception) {

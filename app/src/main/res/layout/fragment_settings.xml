@@ -56,6 +56,18 @@
         android:textColor="@color/favourite_header"
         android:textSize="22sp"
         app:layout_constraintTop_toBottomOf="@id/toggleMode3" />
+    <TextView
+        android:id="@+id/toggleMode5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="30dp"
+        android:paddingTop="10dp"
+        android:paddingRight="30dp"
+        android:paddingBottom="10dp"
+        android:text="@string/googlecdn_off"
+        android:textColor="@color/favourite_header"
+        android:textSize="22sp"
+        app:layout_constraintTop_toBottomOf="@id/toggleMode4" />
 
     <TextView
         android:id="@+id/header"

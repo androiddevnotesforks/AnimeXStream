@@ -99,7 +99,13 @@ class SettingsFragment: Fragment(), View.OnClickListener {
                     rootView.toggleMode4.text = getString(R.string.advancedcontrols_off)
                 }
 
-
+                if (settings?.googlecdn == true){
+                    //   Toast.makeText(context, "old realm on", Toast.LENGTH_SHORT).show()
+                    rootView.toggleMode5.text = getString(R.string.googlecdn_on)
+                }else{
+                    //   Toast.makeText(context, "old realm off", Toast.LENGTH_SHORT).show()
+                    rootView.toggleMode5.text = getString(R.string.googlecdn_off)
+                }
             }
 
         }
@@ -113,6 +119,7 @@ class SettingsFragment: Fragment(), View.OnClickListener {
         rootView.toggleMode2.setOnClickListener(this)
         rootView.toggleMode3.setOnClickListener(this)
         rootView.toggleMode4.setOnClickListener(this)
+        rootView.toggleMode5.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -122,6 +129,7 @@ class SettingsFragment: Fragment(), View.OnClickListener {
             R.id.toggleMode2 -> togglePahe()
             R.id.toggleMode3 -> MALSync()
             R.id.toggleMode4 -> toggleAdvancedControls()
+            R.id.toggleMode5 -> toggleGoogleCDN()
         }
     }
 
@@ -232,6 +240,34 @@ class SettingsFragment: Fragment(), View.OnClickListener {
 
 
 
+    }
+    fun toggleGoogleCDN(){
+        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());
+        try {
+            realm.executeTransaction { realm1: Realm ->
+                val  settings = realm1.where(SettingsModel::class.java).findFirst()
+                if (settings == null) {
+
+                    val settings2 = realm1.createObject(SettingsModel::class.java)
+                    realm1.insertOrUpdate(settings2)
+                    settings2.googlecdn= false
+
+                    rootView.toggleMode5.text = getString(R.string.googlecdn_off)
+                    // set the fields here
+                    //    Toast.makeText(context, "on", Toast.LENGTH_SHORT).show()
+                } else {
+                    if (settings.googlecdn == true) {
+                        settings.googlecdn = false
+                        rootView.toggleMode5.text = getString(R.string.googlecdn_off)
+                        //      Toast.makeText(context, "off", Toast.LENGTH_SHORT).show()
+                    } else {
+                        settings.googlecdn = true
+                        rootView.toggleMode5.text = getString(R.string.googlecdn_on)
+                        //       Toast.makeText(context, "on", Toast.LENGTH_SHORT).show()
+                    }
+                }}
+        } catch (ignored: Exception) {
+        }
     }
     fun MALSync(){
         val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());

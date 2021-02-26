@@ -13,5 +13,6 @@ public open class SettingsModel  (
     var malsyncon : Boolean = false,
     var malaccesstoken : String = "",
     var malrefreshtoken : String = "",
-    var malaccesstime : Int = 0
+    var malaccesstime : Int = 0,
+    var googlecdn: Boolean = false
 ): RealmObject()

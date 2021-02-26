@@ -30,5 +30,7 @@
     <string name="mal_off" translatable="false">MAL Sync: Off</string>
     <string name="advancedcontrols_on" translatable="false">Volume/Brightness Control: On </string>
     <string name="advancedcontrols_off" translatable="false">Volume/Brightness Control: Off</string>
+    <string name="googlecdn_off" translatable="false">Use Google Server (faster,1080p only)</string>
+    <string name="googlecdn_on" translatable="false">Use Default Server (multiple resolutions)</string>
     <string name="home" translatable="false">Home</string>
 </resources>

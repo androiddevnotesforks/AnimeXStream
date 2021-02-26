@@ -1,17 +1,23 @@
 package net.vapormusic.animexstream.ui.main.player
 
+import android.content.Intent
+import android.net.Uri
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.android.exoplayer2.upstream.HttpDataSource
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
+import io.realm.Realm
+import kotlinx.android.synthetic.main.fragment_settings.view.*
+import net.vapormusic.animexstream.BuildConfig
 import net.vapormusic.animexstream.utils.CommonViewModel
 import net.vapormusic.animexstream.utils.constants.C
 import net.vapormusic.animexstream.utils.model.Content
+import net.vapormusic.animexstream.utils.model.SettingsModel
 import net.vapormusic.animexstream.utils.parser.HtmlParser
+import net.vapormusic.animexstream.utils.realm.InitalizeRealm
 import okhttp3.ResponseBody
-import retrofit2.HttpException
-import timber.log.Timber
+
 
 class VideoPlayerViewModel : CommonViewModel() {
 
@@ -65,20 +71,43 @@ class VideoPlayerViewModel : CommonViewModel() {
             }
 
             override fun onNext(response: ResponseBody) {
+                var googlecdn_on = false
+                val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig());
+                try {
+                    realm.executeTransaction { realm1: Realm ->
+                        val  settings = realm1.where(SettingsModel::class.java).findFirst()
+                        if (settings == null) {
+                            val settings2 = realm1.createObject(SettingsModel::class.java)
+                            realm1.insertOrUpdate(settings2)
+                        } else {
+                            googlecdn_on = settings.googlecdn
+                        }}
+                } catch (ignored: Exception) {
+                }
                 if (type == C.TYPE_MEDIA_URL) {
                     val episodeInfo = HtmlParser.parseMediaUrl(response = response.string())
+
                     episodeInfo.vidcdnUrl?.let {
 
-                        compositeDisposable.add(
-//                            episodeRepository.fetchM3u8Url(episodeInfo.vidcdnUrl!!.replace("load.php","loadserver.php")).subscribeWith(
-//                                getEpisodeUrlObserver(C.TYPE_M3U8_PREPROCESS_URL)
+                        var url = episodeInfo.vidcdnUrl!!.replace("load.php", "loadserver.php")
 
-                                episodeRepository.fetchM3u8Url("https://gogo-stream.com/videos"+ _content.value?.episodeUrl).subscribeWith(
-                                getEpisodeUrlObserver(C.TYPE_M3U8_PREPROCESS_URL)
-
-
+                        if (googlecdn_on){url = episodeInfo.vidcdnUrl!!
+                            compositeDisposable.add(
+                                episodeRepository.fetchGoogleUrl(url).subscribeWith(
+                                    getEpisodeUrlObserver(C.TYPE_M3U8_URL)
+                                    //                              episodeRepository.fetchM3u8Url("https://gogo-stream.com/videos"+ _content.value?.episodeUrl).subscribeWith(
+                                    //                               getEpisodeUrlObserver(C.TYPE_M3U8_PREPROCESS_URL)
+                                )
                             )
-                        )
+                        }
+                        else{
+                        compositeDisposable.add(
+                            episodeRepository.fetchM3u8Url(url).subscribeWith(
+                                getEpisodeUrlObserver(C.TYPE_M3U8_URL)
+                                //                              episodeRepository.fetchM3u8Url("https://gogo-stream.com/videos"+ _content.value?.episodeUrl).subscribeWith(
+                                //                               getEpisodeUrlObserver(C.TYPE_M3U8_PREPROCESS_URL)
+                            )
+                        )}
 
                     }
                     val watchedEpisode =
@@ -97,15 +126,23 @@ class VideoPlayerViewModel : CommonViewModel() {
                 }  else if (type == C.TYPE_M3U8_PREPROCESS_URL) {
                     val m3u8Urlx = HtmlParser.getGoGoHLS(response = response.string())
                     val content = _content.value
-                    content?.referer = m3u8Urlx!!.replace("amp;","").replace("streaming","loadserver")
+                    content?.referer = m3u8Urlx!!.replace("amp;", "").replace(
+                        "streaming",
+                        "loadserver"
+                    )
                     _content.value = content
                     saveContent(content!!)
                     compositeDisposable.add(
-                            episodeRepository.fetchM3u8Urlv2(m3u8Urlx!!.replace("amp;","").replace("streaming","loadserver"),m3u8Urlx!!.replace("amp;","").replace("////","//")).subscribeWith(
-                                    getEpisodeUrlObserver(C.TYPE_M3U8_URL)
+                        episodeRepository.fetchM3u8Urlv2(
+                            m3u8Urlx!!.replace("amp;", "").replace(
+                                "streaming",
+                                "loadserver"
+                            ), m3u8Urlx!!.replace("amp;", "").replace("////", "//")
+                        ).subscribeWith(
+                            getEpisodeUrlObserver(C.TYPE_M3U8_URL)
 
 
-                            )
+                        )
                     )
                  //   Timber.e("vapor_x: "+m3u8Urlx)
 

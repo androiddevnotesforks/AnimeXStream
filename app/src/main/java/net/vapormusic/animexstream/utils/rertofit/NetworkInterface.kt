@@ -97,6 +97,16 @@ class NetworkInterface {
         ): Observable<ResponseBody>
     }
 
+    interface FetchGoogleUrl {
+        @Headers(
+            C.USER_AGENT
+        )
+        @GET
+        fun get(
+            @Url url: String
+        ): Observable<ResponseBody>
+    }
+
     interface FetchM3u8Urlv2 {
         @Headers(
                 C.USER_AGENT

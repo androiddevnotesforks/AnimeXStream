@@ -31,6 +31,11 @@ class EpisodeRepository {
         return m3u8urlService.get(url).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
+    fun fetchGoogleUrl(url: String): Observable<ResponseBody> {
+        val m3u8urlService = retrofit.create(NetworkInterface.FetchGoogleUrl::class.java)
+        return m3u8urlService.get(url).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
     fun fetchM3u8Urlv2(url: String, ref : String): Observable<ResponseBody> {
         val m3u8urlService = retrofit.create(NetworkInterface.FetchM3u8Urlv2::class.java)
         return m3u8urlService.get(url,ref).subscribeOn(Schedulers.io())
