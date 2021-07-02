@@ -2,6 +2,7 @@ package net.vapormusic.animexstream.ui.main.player
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,6 +18,7 @@ import net.vapormusic.animexstream.utils.model.SettingsModel
 import net.vapormusic.animexstream.utils.parser.HtmlParser
 import net.vapormusic.animexstream.utils.realm.InitalizeRealm
 import okhttp3.ResponseBody
+import timber.log.Timber
 
 
 class VideoPlayerViewModel : CommonViewModel() {
@@ -88,8 +90,8 @@ class VideoPlayerViewModel : CommonViewModel() {
                     val episodeInfo = HtmlParser.parseMediaUrl(response = response.string())
 
                     episodeInfo.vidcdnUrl?.let {
-
-                        var url = episodeInfo.vidcdnUrl!!.replace("load.php", "loadserver.php")
+                        Timber.e("lolxd2 :"+response.string())
+                        var url = episodeInfo.vidcdnUrl!!.replace("steraming.php", "loadserver.php")
 
                         if (googlecdn_on){url = episodeInfo.vidcdnUrl!!
                             compositeDisposable.add(
