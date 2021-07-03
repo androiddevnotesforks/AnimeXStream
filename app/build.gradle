@@ -33,7 +33,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 10
-        versionName "3.0.4"
+        versionName "3.0.6"
         vectorDrawables.useSupportLibrary = true
         archivesBaseName = "AnimexStream-v$versionName"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
